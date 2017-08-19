@@ -12,6 +12,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +47,21 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Button b = (Button) findViewById(R.id.button);
+
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Animation anim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 300,
+                        Animation.RELATIVE_TO_SELF, Animation.RELATIVE_TO_SELF);
+                anim.setDuration(1000);
+                anim.setInterpolator(getApplicationContext(), android.R.anim.anticipate_overshoot_interpolator);
+                anim.setFillAfter(true);
+                view.startAnimation(anim);
+                findViewById(R.id.button2).startAnimation(anim);
+            }
+        });
 
 
     }
