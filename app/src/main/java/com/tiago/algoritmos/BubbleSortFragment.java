@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 public class BubbleSortFragment extends Fragment
 {
+    private LinearLayout barsContainer;
+    private ViewGroup container;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -20,18 +22,26 @@ public class BubbleSortFragment extends Fragment
 
         getActivity().setTitle("BubbleSort");
 
-        LinearLayout layout = (LinearLayout) view.findViewById(R.id.bars_container);
+        this.container = container;
+
+        barsContainer = (LinearLayout) view.findViewById(R.id.bars_container);
+
+        addBars(13);
+
+        return view;
+    }
+
+    private void addBars(int numBar)
+    {
         LayoutInflater barInflater = LayoutInflater.from(getActivity());
         View barView;
 
-        for(int i = 1; i < 10; i++)
+        for(int i = 1; i < numBar; i++)
         {
             barView = barInflater.inflate(R.layout.bar_layout, container, false);
             barView.findViewById(R.id.bar).setLayoutParams(new LinearLayout.LayoutParams(40, i*20));
             ((TextView)barView.findViewById(R.id.value)).setText(String.valueOf(i));
-            layout.addView(barView);
+            barsContainer.addView(barView);
         }
-
-        return view;
     }
 }
