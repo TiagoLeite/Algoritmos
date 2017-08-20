@@ -48,18 +48,31 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Button b = (Button) findViewById(R.id.button);
+        final Button b1 = (Button) findViewById(R.id.button);
+        final Button b2 = (Button) findViewById(R.id.button2);
 
-        b.setOnClickListener(new View.OnClickListener() {
+        final int x1 = b1.getTop();
+        final int x2 = b2.getTop();
+
+
+        b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Animation anim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 300,
-                        Animation.RELATIVE_TO_SELF, Animation.RELATIVE_TO_SELF);
+                Animation anim = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE,
+                        Animation.ABSOLUTE, b2.getBottom());
                 anim.setDuration(1000);
                 anim.setInterpolator(getApplicationContext(), android.R.anim.anticipate_overshoot_interpolator);
                 anim.setFillAfter(true);
+
+                Animation anim2 = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE,
+                        Animation.ABSOLUTE, -b1.getBottom());
+
+                anim2.setDuration(1000);
+                anim2.setInterpolator(getApplicationContext(), android.R.anim.anticipate_overshoot_interpolator);
+                anim2.setFillAfter(true);
+
                 view.startAnimation(anim);
-                findViewById(R.id.button2).startAnimation(anim);
+                b2.startAnimation(anim2);
             }
         });
 

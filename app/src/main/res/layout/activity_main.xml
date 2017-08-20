@@ -20,7 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Animation"
-            android:id="@+id/button"/>
+            android:id="@+id/button"
+            android:layout_marginBottom="50dp"/>
 
         <Button
             android:layout_width="wrap_content"
