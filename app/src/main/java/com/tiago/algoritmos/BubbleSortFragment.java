@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +16,22 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Exchanger;
+import java.util.concurrent.ThreadFactory;
 
 public class BubbleSortFragment extends Fragment
 {
     private LinearLayout barsContainer;
     private ViewGroup container;
+    private int vet[];
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -35,51 +44,127 @@ public class BubbleSortFragment extends Fragment
 
         barsContainer = (LinearLayout) view.findViewById(R.id.bars_container);
 
-        addBars(12);
+        addBars(9);
 
         Button b = (Button)view.findViewById(R.id.btplay);
 
         b.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-                Random random = new Random();
-
-                int pos = Math.abs(random.nextInt()%12);
-                int op = 11-pos;
-
-                View b1 = barsContainer.findViewWithTag(pos+"");
-                View b2 = barsContainer.findViewWithTag(op+"");
-
-                float x1 = b1.getX();
-                float x2 = b2.getX();
-
-                b1.animate()
-                        .x(x2)
-                        .setDuration(500);
-
-                b2.animate()
-                        .x(x1)
-                        .setDuration(500);
+            public void onClick(View view)
+            {
+                bubbleSort();
             }
         });
 
         return view;
     }
 
+
+    private void animateBars(int pos1, int pos2, boolean swap)
+    {
+        View b1 = barsContainer.findViewWithTag(pos1);
+        View b2 = barsContainer.findViewWithTag(pos2);
+        b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+        for(int i = 0; i < barsContainer.getChildCount(); i++)
+        {
+            View v = barsContainer.getChildAt(i);
+            if(v.equals(b1) || v.equals(b2))
+                continue;
+            v.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
+        }
+
+        if(swap)
+        {
+            float x1 = b1.getX();
+            float x2 = b2.getX();
+            b1.animate()
+                    .x(x2)
+                    .setDuration(900);
+
+            b2.animate()
+                    .x(x1)
+                    .setDuration(900);
+        }
+    }
+
     private void addBars(int numBar)
     {
         LayoutInflater barInflater = LayoutInflater.from(getActivity());
         View barView;
-
-        for(int i = 0; i < numBar; i++)
+        vet = new int[numBar];
+        int j = 0;
+        List<Integer> list = new ArrayList<>(numBar);
+        for(int i = numBar; i > 0 ; i--)
+            list.add(i);
+        Collections.shuffle(list);
+        for(int i = numBar; i > 0 ; i--)
         {
             barView = barInflater.inflate(R.layout.bar_layout, container, false);
-            barView.findViewById(R.id.bar).setLayoutParams(new LinearLayout.LayoutParams(40, i*20));
-            ((TextView)barView.findViewById(R.id.value)).setText(String.valueOf(i));
-            barView.setTag(String.valueOf(i));
+            barView.findViewById(R.id.bar).
+                    setLayoutParams(new LinearLayout.LayoutParams(
+                            (int) getActivity().getResources().getDimension(R.dimen.bar_length),
+                            list.get(i-1)*(int) getActivity().getResources().getDimension(R.dimen.bar_height)));
+            ((TextView)barView.findViewById(R.id.value)).setText(String.valueOf(list.get(i-1)));
+            barView.setTag(list.get(i-1));
             barsContainer.addView(barView);
+            vet[j++] = list.get(i-1);
         }
+
+
+    }
+
+    private void bubbleSort()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                int size = vet.length, aux;
+                for(int i = 0; i < size; i++)
+                {
+                    for(int j = 0; j < size-1-i; j++)
+                    {
+                        if(vet[j] > vet[j+1])
+                        {
+                            final int tag = vet[j];
+                            final int tag2 = vet[j+1];
+                            aux = vet[j];
+                            vet[j] = vet[j+1];
+                            vet[j+1] = aux;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run()
+                                {
+                                    animateBars(tag, tag2, true);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            final int tag = vet[j];
+                            final int tag2 = vet[j+1];
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run()
+                                {
+                                    animateBars(tag, tag2, false);
+                                }
+                            });
+                        }
+                        try
+                        {
+                            Thread.sleep(1000);
+                        }
+                        catch (Exception e)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
 }
