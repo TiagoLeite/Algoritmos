@@ -9,17 +9,20 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class BubbleSortFragment extends Fragment
 {
     private LinearLayout barsContainer;
     private ViewGroup container;
     private int vet[];
+    private View rootView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -34,7 +37,7 @@ public class BubbleSortFragment extends Fragment
 
         addBars(9);
 
-        ImageView b = (ImageView)view.findViewById(R.id.btplay);
+        ImageView b = (ImageView)view.findViewById(R.id.bt_play);
 
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +50,8 @@ public class BubbleSortFragment extends Fragment
         WebView webview = (WebView)view.findViewById(R.id.code_algorithm);
         String summary = "<html><body>You scored <b>192</b> points.</body></html>";
         webview.loadData(summary, "text/html", null);
+
+        rootView = view;
 
         return view;
     }
@@ -109,54 +114,57 @@ public class BubbleSortFragment extends Fragment
 
     private void bubbleSort()
     {
-        new Thread(new Runnable() {
-            @Override
-            public void run()
+        BubbleSortThread thread = new BubbleSortThread();
+        thread.start();
+    }
+
+    private class BubbleSortThread extends Thread
+    {
+        @Override
+        public void run()
+        {
+            int size = vet.length, aux;
+            for(int i = 0; i < size; i++)
             {
-                int size = vet.length, aux;
-                for(int i = 0; i < size; i++)
+                for(int j = 0; j < size-1-i; j++)
                 {
-                    for(int j = 0; j < size-1-i; j++)
+                    if(vet[j] > vet[j+1])
                     {
-                        if(vet[j] > vet[j+1])
-                        {
-                            final int tag = vet[j];
-                            final int tag2 = vet[j+1];
-                            aux = vet[j];
-                            vet[j] = vet[j+1];
-                            vet[j+1] = aux;
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    animateBars(tag, tag2, true);
-                                }
-                            });
-                        }
-                        else
-                        {
-                            final int tag = vet[j];
-                            final int tag2 = vet[j+1];
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    animateBars(tag, tag2, false);
-                                }
-                            });
-                        }
-                        try
-                        {
-                            Thread.sleep(1000);
-                        }
-                        catch (Exception e)
-                        {
-                            return;
-                        }
+                        final int tag = vet[j];
+                        final int tag2 = vet[j+1];
+                        aux = vet[j];
+                        vet[j] = vet[j+1];
+                        vet[j+1] = aux;
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                animateBars(tag, tag2, true);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        final int tag = vet[j];
+                        final int tag2 = vet[j+1];
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                animateBars(tag, tag2, false);
+                            }
+                        });
+                    }
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e)
+                    {
+                        return;
                     }
                 }
             }
-        }).start();
+        }
     }
-
 }

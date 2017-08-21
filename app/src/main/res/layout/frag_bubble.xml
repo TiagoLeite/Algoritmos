@@ -23,13 +23,32 @@
 
     </HorizontalScrollView>
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center"
-        app:srcCompat="@drawable/play"
-        android:id="@+id/btplay"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            app:srcCompat="@drawable/pause"
+            android:id="@+id/bt_pause"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            app:srcCompat="@drawable/play"
+            android:id="@+id/bt_play"/>
+
+    </LinearLayout>
+
 
     <WebView
         android:layout_width="match_parent"
