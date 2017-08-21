@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -46,7 +48,7 @@ public class BubbleSortFragment extends Fragment
 
         addBars(9);
 
-        Button b = (Button)view.findViewById(R.id.btplay);
+        ImageButton b = (ImageButton)view.findViewById(R.id.btplay);
 
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +57,10 @@ public class BubbleSortFragment extends Fragment
                 bubbleSort();
             }
         });
+
+        WebView webview = (WebView)view.findViewById(R.id.code_algorithm);
+        String summary = "<html><body>You scored <b>192</b> points.</body></html>";
+        webview.loadData(summary, "text/html", null);
 
         return view;
     }

@@ -23,11 +23,19 @@
 
     </HorizontalScrollView>
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="PLAY"
+        android:background="@color/colorPrimary"
+        android:layout_gravity="center"
+        android:src="@android:drawable/ic_media_play"
         android:id="@+id/btplay"/>
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/code_algorithm"
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>
