@@ -114,57 +114,106 @@ public class BubbleSortFragment extends Fragment
 
     private void bubbleSort()
     {
-        BubbleSortThread thread = new BubbleSortThread();
+        final BubbleSortThread thread = new BubbleSortThread();
         thread.start();
+
+        ImageView pause = (ImageView)rootView.findViewById(R.id.bt_pause);
+
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                try
+                {
+                    if(thread.suspended)
+                        thread.resumir();
+                    else
+                        thread.suspender();
+                }
+                catch (Exception e)
+                {
+                    return;
+                }
+            }
+        });
     }
 
     private class BubbleSortThread extends Thread
     {
+        private boolean suspended = false;
         @Override
         public void run()
         {
-            int size = vet.length, aux;
-            for(int i = 0; i < size; i++)
+            try
             {
-                for(int j = 0; j < size-1-i; j++)
+                int size = vet.length, aux;
+                for(int i = 0; i < size; i++)
                 {
-                    if(vet[j] > vet[j+1])
+                    for(int j = 0; j < size-1-i; j++)
                     {
-                        final int tag = vet[j];
-                        final int tag2 = vet[j+1];
-                        aux = vet[j];
-                        vet[j] = vet[j+1];
-                        vet[j+1] = aux;
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                animateBars(tag, tag2, true);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        final int tag = vet[j];
-                        final int tag2 = vet[j+1];
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                animateBars(tag, tag2, false);
-                            }
-                        });
-                    }
-                    try
-                    {
-                        Thread.sleep(1000);
-                    }
-                    catch (Exception e)
-                    {
-                        return;
+                        synchronized (this)
+                        {
+                            while (suspended)
+                                this.wait();
+                        }
+
+                        if(vet[j] > vet[j+1])
+                        {
+                            final int tag = vet[j];
+                            final int tag2 = vet[j+1];
+                            aux = vet[j];
+                            vet[j] = vet[j+1];
+                            vet[j+1] = aux;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run()
+                                {
+                                    animateBars(tag, tag2, true);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            final int tag = vet[j];
+                            final int tag2 = vet[j+1];
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run()
+                                {
+                                    animateBars(tag, tag2, false);
+                                }
+                            });
+                        }
+                        try
+                        {
+                            Thread.sleep(1000);
+                        }
+                        catch (Exception e)
+                        {
+                            return;
+                        }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                return;
+            }
+        }
+
+        void suspender()
+        {
+            this.suspended = true;
+        }
+
+        synchronized void resumir()
+        {
+            this.suspended = false;
+            notify();
+        }
+
+        synchronized boolean isSuspended() {
+            return suspended;
         }
     }
 }
