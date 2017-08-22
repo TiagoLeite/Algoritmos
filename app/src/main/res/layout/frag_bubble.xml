@@ -32,27 +32,30 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            app:srcCompat="@drawable/pause"
-            android:id="@+id/bt_pause"/>
+            app:srcCompat="@drawable/play"
+            android:id="@+id/play_pause"/>
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            app:srcCompat="@drawable/play"
-            android:id="@+id/bt_play"/>
+            app:srcCompat="@drawable/restart"
+            android:visibility="gone"
+            android:id="@+id/restart"/>
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_info"
+        android:padding="4dp"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
 
 
     <WebView
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:visibility="gone"
         android:id="@+id/code_algorithm"
         android:layout_marginTop="10dp"/>
 

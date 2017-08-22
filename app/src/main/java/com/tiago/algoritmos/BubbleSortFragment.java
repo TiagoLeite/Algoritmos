@@ -1,21 +1,20 @@
 package com.tiago.algoritmos;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class BubbleSortFragment extends Fragment
 {
@@ -23,6 +22,8 @@ public class BubbleSortFragment extends Fragment
     private ViewGroup container;
     private int vet[];
     private View rootView;
+    private BubbleSortThread bubbleSortThread;
+    private MediaPlayer mp;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -35,55 +36,106 @@ public class BubbleSortFragment extends Fragment
 
         barsContainer = (LinearLayout) view.findViewById(R.id.bars_container);
 
-        addBars(9);
+        addBars(10);
 
-        ImageView b = (ImageView)view.findViewById(R.id.bt_play);
-
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                bubbleSort();
-            }
-        });
-
-        WebView webview = (WebView)view.findViewById(R.id.code_algorithm);
+        /*WebView webview = (WebView)view.findViewById(R.id.code_algorithm);
         String summary = "<html><body>You scored <b>192</b> points.</body></html>";
-        webview.loadData(summary, "text/html", null);
+        webview.loadData(summary, "text/html", null);*/
 
         rootView = view;
 
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setup();
+    }
 
-    private void animateBars(int pos1, int pos2, boolean swap)
+    private void setup()
     {
-        View b1 = barsContainer.findViewWithTag(pos1);
-        View b2 = barsContainer.findViewWithTag(pos2);
-        b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        bubbleSortThread = new BubbleSortThread();
 
-        for(int i = 0; i < barsContainer.getChildCount(); i++)
+        ImageView playPause = (ImageView)rootView.findViewById(R.id.play_pause);
+
+        mp = MediaPlayer.create(getActivity(), R.raw.swap);
+
+        playPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                try
+                {
+                    if(!bubbleSortThread.isAlive())
+                    {
+                        bubbleSortThread.start();
+                        ((ImageView)view).setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.pause));
+                    }
+                    else if(bubbleSortThread.suspended)
+                    {
+                        ((ImageView)view).setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.pause));
+                        bubbleSortThread.resumir();
+                    }
+                    else
+                    {
+                        ((ImageView)view).setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.play));
+                        bubbleSortThread.suspender();
+                    }
+                }
+                catch (Exception e)
+                {
+                    return;
+                }
+            }
+        });
+    }
+
+    private void animateBars(final int pos1, final int pos2, final boolean swap)
+    {
+        getActivity().runOnUiThread(new Runnable()
         {
-            View v = barsContainer.getChildAt(i);
-            if(v.equals(b1) || v.equals(b2))
-                continue;
-            v.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
-        }
+            @Override
+            public void run()
+            {
+                View b1 = barsContainer.findViewWithTag(pos1);
+                View b2 = barsContainer.findViewWithTag(pos2);
+                b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
-        if(swap)
-        {
-            float x1 = b1.getX();
-            float x2 = b2.getX();
-            b1.animate()
-                    .x(x2)
-                    .setDuration(900);
+                for(int i = 0; i < barsContainer.getChildCount(); i++)
+                {
+                    View v = barsContainer.getChildAt(i);
+                    if(v.equals(b1) || v.equals(b2))
+                        continue;
+                    v.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
+                }
 
-            b2.animate()
-                    .x(x1)
-                    .setDuration(900);
-        }
+                if(swap)
+                {
+                    mp.start();
+                    float x1 = b1.getX();
+                    float x2 = b2.getX();
+                    b1.animate()
+                            .x(x2)
+                            .setDuration(500);
+
+                    b2.animate()
+                            .x(x1)
+                            .setDuration(500);
+                }
+            }
+        });
+    }
+
+    private void setBarSortedOk(final int pos)
+    {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                barsContainer.findViewWithTag(pos).findViewById(R.id.check_ok).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void addBars(int numBar)
@@ -112,31 +164,6 @@ public class BubbleSortFragment extends Fragment
 
     }
 
-    private void bubbleSort()
-    {
-        final BubbleSortThread thread = new BubbleSortThread();
-        thread.start();
-
-        ImageView pause = (ImageView)rootView.findViewById(R.id.bt_pause);
-
-        pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                try
-                {
-                    if(thread.suspended)
-                        thread.resumir();
-                    else
-                        thread.suspender();
-                }
-                catch (Exception e)
-                {
-                    return;
-                }
-            }
-        });
-    }
 
     private class BubbleSortThread extends Thread
     {
@@ -156,43 +183,25 @@ public class BubbleSortFragment extends Fragment
                             while (suspended)
                                 this.wait();
                         }
-
                         if(vet[j] > vet[j+1])
                         {
-                            final int tag = vet[j];
-                            final int tag2 = vet[j+1];
                             aux = vet[j];
                             vet[j] = vet[j+1];
                             vet[j+1] = aux;
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    animateBars(tag, tag2, true);
-                                }
-                            });
+                            animateBars(vet[j],  vet[j+1], true);
                         }
                         else
-                        {
-                            final int tag = vet[j];
-                            final int tag2 = vet[j+1];
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    animateBars(tag, tag2, false);
-                                }
-                            });
-                        }
+                            animateBars(vet[j],  vet[j+1], false);
                         try
                         {
-                            Thread.sleep(1000);
+                            Thread.sleep(700);
                         }
                         catch (Exception e)
                         {
                             return;
                         }
                     }
+                    setBarSortedOk(vet[size-i-1]);
                 }
             }
             catch (Exception e)
@@ -210,10 +219,6 @@ public class BubbleSortFragment extends Fragment
         {
             this.suspended = false;
             notify();
-        }
-
-        synchronized boolean isSuspended() {
-            return suspended;
         }
     }
 }
