@@ -30,8 +30,8 @@
         android:layout_margin="10dp">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             app:srcCompat="@drawable/play"
             android:id="@+id/play_pause"/>
 
