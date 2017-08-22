@@ -160,10 +160,7 @@ public class BubbleSortFragment extends Fragment
             barsContainer.addView(barView);
             vet[j++] = list.get(i-1);
         }
-
-
     }
-
 
     private class BubbleSortThread extends Thread
     {

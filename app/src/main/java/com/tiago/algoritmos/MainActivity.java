@@ -2,7 +2,6 @@ package com.tiago.algoritmos;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -11,15 +10,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private Toolbar toolbar;
+    private Map<String, Fragment> fragmentMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewDrawer.setLayoutManager(llm);
-        String[] myDataset = new String[]{"BubbleSort", "MergeSort", "QuickSort"};
+        String[] myDataset = new String[]{"BubbleSort", "InsertionSort", "SelectSort"};
         RecyclerDrawerAdapter mAdapter = new RecyclerDrawerAdapter(myDataset);
         recyclerViewDrawer.setAdapter(mAdapter);
 
@@ -51,13 +52,19 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
+
+        fragmentMap = new HashMap<>();
+
+        fragmentMap.put("BubbleSort", new BubbleSortFragment());
+        fragmentMap.put("InsertionSort", new InsertionSortFragment());
+
     }
 
-    private void setFragment(Fragment fragment)
+    private void replaceFragment(Fragment fragment)
     {
         FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction ft = manager.beginTransaction();
-        ft.add(R.id.main_container, fragment).commit();
+        manager.beginTransaction().replace(R.id.main_container, fragment)
+                .commit();
     }
 
     @Override
@@ -89,21 +96,45 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 
+            final int pos = holder.getAdapterPosition();
             holder.mTextView.setText(mDataset[position]);
-            holder.mTextView.setOnClickListener(new View.OnClickListener() {
+            holder.mTextView.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
                 public void onClick(View view)
                 {
-                    if(lastClicked != null)
+                    switch (pos)
                     {
-                        ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
-                        lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
+                        case 0:
+                            if(lastClicked != null)
+                            {
+                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
+                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
+                            }
+                            lastClicked = view;
+                            replaceFragment(fragmentMap.get("BubbleSort"));
+                            drawerLayout.closeDrawers();
+                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
+                            view.setBackgroundColor(getResources().getColor(R.color.gray));
+                            Log.d("debug", pos+"");
+                            break;
+                        case 1:
+                            if(lastClicked != null)
+                            {
+                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
+                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
+                            }
+                            lastClicked = view;
+                            replaceFragment(fragmentMap.get("InsertionSort"));
+                            drawerLayout.closeDrawers();
+                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
+                            view.setBackgroundColor(getResources().getColor(R.color.gray));
+                            Log.d("debug", pos+"");
+                            break;
+                        default:
+                            break;
+
                     }
-                    lastClicked = view;
-                    setFragment(new BubbleSortFragment());
-                    drawerLayout.closeDrawers();
-                    ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
-                    view.setBackgroundColor(getResources().getColor(R.color.gray));
                 }
             });
         }
