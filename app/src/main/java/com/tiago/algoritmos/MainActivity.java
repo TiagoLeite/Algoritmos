@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentMap.put("BubbleSort", new BubbleSortFragment());
         fragmentMap.put("InsertionSort", new InsertionSortFragment());
+        fragmentMap.put("SelectionSort", new SelectionSortFragment());
 
     }
 
@@ -126,6 +127,19 @@ public class MainActivity extends AppCompatActivity {
                             }
                             lastClicked = view;
                             replaceFragment(fragmentMap.get("InsertionSort"));
+                            drawerLayout.closeDrawers();
+                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
+                            view.setBackgroundColor(getResources().getColor(R.color.gray));
+                            Log.d("debug", pos+"");
+                            break;
+                        case 2:
+                            if(lastClicked != null)
+                            {
+                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
+                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
+                            }
+                            lastClicked = view;
+                            replaceFragment(fragmentMap.get("SelectionSort"));
                             drawerLayout.closeDrawers();
                             ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
                             view.setBackgroundColor(getResources().getColor(R.color.gray));
