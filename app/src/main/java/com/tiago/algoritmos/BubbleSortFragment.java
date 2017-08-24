@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ public class BubbleSortFragment extends Fragment
     private View rootView;
     private BubbleSortThread bubbleSortThread;
     private MediaPlayer mp;
+    private List<Pair<Integer, Integer>> swaps;
+    private TextView tvInfo;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -43,6 +46,10 @@ public class BubbleSortFragment extends Fragment
         webview.loadData(summary, "text/html", null);*/
 
         rootView = view;
+
+        swaps = new ArrayList<>();
+
+        tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
 
         return view;
     }
@@ -123,6 +130,11 @@ public class BubbleSortFragment extends Fragment
                     b2.animate()
                             .x(x1)
                             .setDuration(500);
+                    tvInfo.setText("trocado!!!!");
+                }
+                else
+                {
+                    tvInfo.setText("nao trocado!!!");
                 }
             }
         });
