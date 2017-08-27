@@ -32,15 +32,23 @@
         <ImageView
             android:layout_width="45dp"
             android:layout_height="45dp"
-            app:srcCompat="@drawable/play"
-            android:id="@+id/play_pause"/>
+            android:visibility="visible"
+            app:srcCompat="@drawable/previous"
+            android:id="@+id/previous"/>
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/restart"
-            android:visibility="gone"
-            android:id="@+id/restart"/>
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/next"
+            android:id="@+id/next"/>
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:srcCompat="@drawable/play"
+            android:id="@+id/play_pause" />
+
 
     </LinearLayout>
 

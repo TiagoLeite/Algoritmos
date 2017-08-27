@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.tiago.algoritmos.R.raw.swap;
+
 public class BubbleSortFragment extends Fragment
 {
     private LinearLayout barsContainer;
@@ -25,7 +26,7 @@ public class BubbleSortFragment extends Fragment
     private View rootView;
     private BubbleSortThread bubbleSortThread;
     private MediaPlayer mp;
-    private List<Pair<Integer, Integer>> swaps;
+    private List<AlgorithmStep> steps;
     private TextView tvInfo;
     @Nullable
     @Override
@@ -47,8 +48,6 @@ public class BubbleSortFragment extends Fragment
 
         rootView = view;
 
-        swaps = new ArrayList<>();
-
         tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
 
         return view;
@@ -62,16 +61,13 @@ public class BubbleSortFragment extends Fragment
 
     private void setup()
     {
-        bubbleSortThread = new BubbleSortThread();
-
         ImageView playPause = (ImageView)rootView.findViewById(R.id.play_pause);
-
-        mp = MediaPlayer.create(getActivity(), R.raw.swap);
-
+        mp = MediaPlayer.create(getActivity(), swap);
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
+                bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_AUTO);
                 try
                 {
                     if(!bubbleSortThread.isAlive())
@@ -96,17 +92,35 @@ public class BubbleSortFragment extends Fragment
                 }
             }
         });
+
+        ImageView next = (ImageView)rootView.findViewById(R.id.next);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                if(bubbleSortThread == null || bubbleSortThread.isFinished())
+                {
+
+                    bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_STEP_BY_STEP);
+                    bubbleSortThread.start();
+                }
+                else if(!bubbleSortThread.isFinished())
+                {
+                    bubbleSortThread.runStep();
+                }
+            }
+        });
     }
 
-    private void animateBars(final int pos1, final int pos2, final boolean swap)
+    private void animateBars(final AlgorithmStep step)
     {
         getActivity().runOnUiThread(new Runnable()
         {
             @Override
             public void run()
             {
-                View b1 = barsContainer.findViewWithTag(pos1);
-                View b2 = barsContainer.findViewWithTag(pos2);
+                View b1 = barsContainer.findViewWithTag(step.getPosition1());
+                View b2 = barsContainer.findViewWithTag(step.getPosition2());
                 b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
@@ -118,7 +132,7 @@ public class BubbleSortFragment extends Fragment
                     v.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
                 }
 
-                if(swap)
+                if(step.isSwap())
                 {
                     mp.start();
                     float x1 = b1.getX();
@@ -130,18 +144,15 @@ public class BubbleSortFragment extends Fragment
                     b2.animate()
                             .x(x1)
                             .setDuration(500);
-                    tvInfo.setText("trocado!!!!");
                 }
-                else
-                {
-                    tvInfo.setText("nao trocado!!!");
-                }
+                tvInfo.setText(step.getStateDescripton());
             }
         });
     }
 
     private void setBarSortedOk(final int pos)
     {
+        if(pos < 0) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -176,46 +187,65 @@ public class BubbleSortFragment extends Fragment
 
     private class BubbleSortThread extends Thread
     {
+        public static final int MODE_AUTO = 0;
+        public static final int MODE_STEP_BY_STEP = 1;
         private boolean suspended = false;
+        private boolean finished = false;
+        private int mode;
+        private int currentStep;
+
+        BubbleSortThread(int mode)
+        {
+            super();
+            this.mode = mode;
+            currentStep = 0;
+        }
+
         @Override
         public void run()
         {
-            try
+            runAlgorithm();
+            switch (mode)
             {
-                int size = vet.length, aux;
-                for(int i = 0; i < size; i++)
-                {
-                    for(int j = 0; j < size-1-i; j++)
-                    {
-                        synchronized (this)
-                        {
-                            while (suspended)
-                                this.wait();
-                        }
-                        if(vet[j] > vet[j+1])
-                        {
-                            aux = vet[j];
-                            vet[j] = vet[j+1];
-                            vet[j+1] = aux;
-                            animateBars(vet[j],  vet[j+1], true);
-                        }
-                        else
-                            animateBars(vet[j],  vet[j+1], false);
-                        try
-                        {
-                            Thread.sleep(700);
-                        }
-                        catch (Exception e)
-                        {
-                            return;
-                        }
-                    }
-                    setBarSortedOk(vet[size-i-1]);
-                }
+                case MODE_AUTO:
+                    runAuto();
+                    break;
+                case MODE_STEP_BY_STEP:
+                    runStep();
             }
-            catch (Exception e)
+        }
+
+        private void runStep()
+        {
+            if(currentStep >= steps.size())
             {
+                finished = true;
                 return;
+            }
+            AlgorithmStep step = steps.get(currentStep++);
+            animateBars(step);
+            setBarSortedOk(step.getBarOk());
+        }
+
+        private void runAuto()
+        {
+            for(AlgorithmStep step : steps)
+            {
+                try
+                {
+                    synchronized (this)
+                    {
+                        while (suspended)
+                            this.wait();
+                    }
+                    animateBars(step);
+                    Thread.sleep(700);
+                }
+                catch (Exception e)
+                {
+                    return;
+                }
+                setBarSortedOk(step.getBarOk());
             }
         }
 
@@ -228,6 +258,47 @@ public class BubbleSortFragment extends Fragment
         {
             this.suspended = false;
             notify();
+        }
+
+        private void runAlgorithm()
+        {
+            steps = new ArrayList<>();
+            AlgorithmStep step = null;
+            int size = vet.length, aux;
+            for(int i = 0; i < size; i++)
+            {
+                for(int j = 0; j < size-1-i; j++)
+                {
+                    if(vet[j] > vet[j+1])
+                    {
+                        aux = vet[j];
+                        vet[j] = vet[j+1];
+                        vet[j+1] = aux;
+                        step = new AlgorithmStep(vet[j], vet[j+1], true);
+                        step.setStepDescripton("Yes " + j);
+                        steps.add(step);
+                    }
+                    else
+                    {
+                        step = new AlgorithmStep(vet[j], vet[j+1], false);
+                        step.setStepDescripton("Not " + j);
+                        steps.add(step);
+                    }
+                }
+                step.setBarOk(vet[size-i-1]);//nao vai dar null pointer nao!
+            }
+        }
+
+        public int getCurrentStep() {
+            return currentStep;
+        }
+
+        public void setCurrentStep(int currentStep) {
+            this.currentStep = currentStep;
+        }
+
+        public boolean isFinished() {
+            return finished;
         }
     }
 }
