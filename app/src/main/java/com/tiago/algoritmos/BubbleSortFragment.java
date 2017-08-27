@@ -1,5 +1,6 @@
 package com.tiago.algoritmos;
 
+import android.graphics.PointF;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,6 +30,7 @@ public class BubbleSortFragment extends Fragment
     private MediaPlayer mp;
     private List<AlgorithmStep> steps;
     private TextView tvInfo;
+    private GraphView graph;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -51,6 +53,15 @@ public class BubbleSortFragment extends Fragment
         rootView = view;
 
         tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
+
+        graph = (GraphView)rootView.findViewById(R.id.graph);
+
+        graph.setPointA(new PointF(10, 100));
+        graph.setPointB(new PointF(500, 400));
+
+        graph.draw();
+
+
 
         return view;
     }
