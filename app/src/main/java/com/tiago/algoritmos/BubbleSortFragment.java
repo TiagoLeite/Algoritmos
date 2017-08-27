@@ -106,7 +106,24 @@ public class BubbleSortFragment extends Fragment
                 }
                 else if(!bubbleSortThread.isFinished())
                 {
-                    bubbleSortThread.runStep();
+                    bubbleSortThread.runNextStep();
+                }
+            }
+        });
+
+        ImageView previous = (ImageView)rootView.findViewById(R.id.previous);
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                if(bubbleSortThread == null || bubbleSortThread.isFinished())
+                {
+                    bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_STEP_BY_STEP);
+                    bubbleSortThread.start();
+                }
+                else if(!bubbleSortThread.isFinished())
+                {
+                    bubbleSortThread.runPreviousStep();
                 }
             }
         });
@@ -211,11 +228,11 @@ public class BubbleSortFragment extends Fragment
                     runAuto();
                     break;
                 case MODE_STEP_BY_STEP:
-                    runStep();
+                    runNextStep();
             }
         }
 
-        private void runStep()
+        private void runNextStep()
         {
             if(currentStep >= steps.size())
             {
@@ -223,6 +240,17 @@ public class BubbleSortFragment extends Fragment
                 return;
             }
             AlgorithmStep step = steps.get(currentStep++);
+            animateBars(step);
+            setBarSortedOk(step.getBarOk());
+        }
+
+        private void runPreviousStep()
+        {
+            if(currentStep < 1)
+            {
+                return;
+            }
+            AlgorithmStep step = steps.get(--currentStep);
             animateBars(step);
             setBarSortedOk(step.getBarOk());
         }
@@ -275,13 +303,13 @@ public class BubbleSortFragment extends Fragment
                         vet[j] = vet[j+1];
                         vet[j+1] = aux;
                         step = new AlgorithmStep(vet[j], vet[j+1], true);
-                        step.setStepDescripton("Yes " + j);
+                        step.setStepDescripton("step " + bubbleSortThread.getCurrentStep());
                         steps.add(step);
                     }
                     else
                     {
                         step = new AlgorithmStep(vet[j], vet[j+1], false);
-                        step.setStepDescripton("Not " + j);
+                        step.setStepDescripton("step " + bubbleSortThread.getCurrentStep());
                         steps.add(step);
                     }
                 }
