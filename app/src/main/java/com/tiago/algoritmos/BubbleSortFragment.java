@@ -67,13 +67,17 @@ public class BubbleSortFragment extends Fragment
             @Override
             public void onClick(View view)
             {
-                bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_AUTO);
+                ((ImageView)rootView.findViewById(R.id.next)).
+                        setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.next_disabled));
+                ((ImageView)rootView.findViewById(R.id.previous)).
+                        setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.previous_disabled));
                 try
                 {
-                    if(!bubbleSortThread.isAlive())
+                    if(bubbleSortThread == null || bubbleSortThread.isFinished())
                     {
+
+                        bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_AUTO);
                         bubbleSortThread.start();
-                        ((ImageView)view).setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.pause));
                     }
                     else if(bubbleSortThread.suspended)
                     {
@@ -100,7 +104,6 @@ public class BubbleSortFragment extends Fragment
             {
                 if(bubbleSortThread == null || bubbleSortThread.isFinished())
                 {
-
                     bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_STEP_BY_STEP);
                     bubbleSortThread.start();
                 }
