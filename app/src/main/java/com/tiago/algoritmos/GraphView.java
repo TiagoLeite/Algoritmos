@@ -1,7 +1,6 @@
 package com.tiago.algoritmos;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -12,11 +11,12 @@ import android.view.View;
 
 public class GraphView extends View
 {
-    private Bitmap bitmap;
+    //private Bitmap bitmap;
     private Canvas canvas;
     private Path path;
-    private Paint paint;
+    private Paint paint, paint2;
     private Context context;
+    private boolean firstClick = true;
     private float mx, my;
 
     public GraphView(Context context, @Nullable AttributeSet attrs) {
@@ -27,35 +27,59 @@ public class GraphView extends View
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(getResources().getColor(R.color.colorPrimary));
-        //paint.setStyle(Paint.Style.STROKE);
-        //paint.setStrokeJoin(Paint.Join.ROUND);
-        //paint.setStrokeWidth(60f);
-        bitmap = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeWidth(10f);
+        //bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         canvas = new Canvas();
-        canvas.setBitmap(bitmap);
+
+        paint2 = new Paint();
+        paint2.setAntiAlias(true);
+        paint2.setColor(getResources().getColor(R.color.colorPrimary));
+        //paint2.setStyle(Paint.Style.STROKE);
+        //paint2.setStrokeJoin(Paint.Join.ROUND);
+        paint2.setStrokeWidth(30f);
+
+        //canvas.setBitmap(bitmap);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawPath(path, paint);
+        canvas.drawPath(path, paint2);
+
     }
 
-    @Override
+    /*@Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         canvas = new Canvas();
         canvas.setBitmap(bitmap);
 
-    }
+    }*/
 
     private void onStartTouch(float x, float y)
     {
-        path.addCircle(x, y, 35f, Path.Direction.CCW);
-        path.moveTo(x, y);
+        if(firstClick)
+            firstClick = false;
+        else
+        {
+            //Paint paint2 = new Paint();
+            //paint2.setAntiAlias(true);
+            //paint2.setColor(getResources().getColor(R.color.colorPrimary));
+            //paint2.setStyle(Paint.Style.STROKE);
+            //paint2.setStrokeJoin(Paint.Join.ROUND);
+            paint2.setStrokeWidth(40f);
+            path.moveTo(mx, my);
+            path.lineTo(x, y);
+            //path.quadTo(mx, my, x, y);
+            canvas.drawPath(path, paint2);
+        }
         mx = x;
         my = y;
+        path.addCircle(x, y, 35f, Path.Direction.CCW);
     }
 
     private void moveTouch(float x, float y)
