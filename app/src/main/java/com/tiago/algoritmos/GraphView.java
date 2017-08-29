@@ -114,7 +114,7 @@ public class GraphView extends View
 
         if(event.getAction() == MotionEvent.ACTION_DOWN)
         {
-            if (vertexExists(x, y))
+            if (vertexExists(x, y, 50f))
             {
                 Pair<Double, Double> p = getNearestVertex(x, y);
                 pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
@@ -138,19 +138,35 @@ public class GraphView extends View
             pathHint.reset();
             pathHint.moveTo((float) mx, (float) my);
             pathHint.lineTo((float) x, (float) y);
-            Pair<Double, Double> p = getNearestVertex(x, y);
+            if(vertexExists(x, y, 40f))
+            {
+                pathHint.reset();
+                Pair<Double, Double> p = getNearestVertex(x, y);
+                path2.moveTo((float) mx, (float) my);
+                path2.lineTo(p.first.floatValue(), p.second.floatValue());
+                pathHint.moveTo((float) mx, (float) my);
+                pathHint.lineTo(p.first.floatValue(), p.second.floatValue());
+                //pathHint.reset();
+            }
             Log.d("debug", "move");
             invalidate();
         }
         else if(event.getAction() == MotionEvent.ACTION_UP)
         {
+            if(vertexExists(x, y, 10f))
+            {
+                Pair<Double, Double> p = getNearestVertex(x, y);
+                path2.moveTo((float) mx, (float) my);
+                path2.lineTo(p.first.floatValue(), p.second.floatValue());
+            }
             pathHint.reset();
+            Log.d("debug", "move");
             invalidate();
         }
         return true;
     }
 
-    private boolean vertexExists(double x, double y)
+    private boolean vertexExists(double x, double y, double tolerance)
     {
         double dx, dy, dist;
         for(Pair<Double, Double> p : vertexes)
@@ -159,7 +175,7 @@ public class GraphView extends View
             dy = Math.abs(y - p.second);
             dist = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
             Log.d("debug", dist+"======");
-            if(dist < 30f)
+            if(dist < tolerance)
                 return true;
         }
         return false;
