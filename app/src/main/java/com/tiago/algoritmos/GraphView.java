@@ -14,6 +14,7 @@ public class GraphView extends View
     //private Bitmap bitmap;
     private Canvas canvas;
     private Path path;
+    private Path path2;
     private Paint paint, paint2;
     private Context context;
     private boolean firstClick = true;
@@ -24,21 +25,20 @@ public class GraphView extends View
         this.setDrawingCacheEnabled(true);
         this.context = context;
         path = new Path();
+        path2 = new Path();
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(getResources().getColor(R.color.colorPrimary));
-        paint.setStyle(Paint.Style.STROKE);
+        //paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
-        paint.setStrokeWidth(10f);
         //bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         canvas = new Canvas();
-
         paint2 = new Paint();
         paint2.setAntiAlias(true);
         paint2.setColor(getResources().getColor(R.color.colorPrimary));
-        //paint2.setStyle(Paint.Style.STROKE);
-        //paint2.setStrokeJoin(Paint.Join.ROUND);
-        paint2.setStrokeWidth(30f);
+        paint2.setStyle(Paint.Style.STROKE);
+        paint2.setStrokeJoin(Paint.Join.ROUND);
+        paint2.setStrokeWidth(10f);
 
         //canvas.setBitmap(bitmap);
     }
@@ -47,8 +47,7 @@ public class GraphView extends View
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawPath(path, paint);
-        canvas.drawPath(path, paint2);
-
+        canvas.drawPath(path2, paint2);
     }
 
     /*@Override
@@ -68,18 +67,18 @@ public class GraphView extends View
         {
             //Paint paint2 = new Paint();
             //paint2.setAntiAlias(true);
-            //paint2.setColor(getResources().getColor(R.color.colorPrimary));
+            //paint.setColor(getResources().getColor(R.color.colorAccent));
             //paint2.setStyle(Paint.Style.STROKE);
             //paint2.setStrokeJoin(Paint.Join.ROUND);
-            paint2.setStrokeWidth(40f);
-            path.moveTo(mx, my);
-            path.lineTo(x, y);
+            //paint.setStrokeWidth(10f);
+            path2.moveTo(mx, my);
+            path2.lineTo(x, y);
             //path.quadTo(mx, my, x, y);
-            canvas.drawPath(path, paint2);
+            //canvas.drawPath(path, paint2);
         }
         mx = x;
         my = y;
-        path.addCircle(x, y, 35f, Path.Direction.CCW);
+        path.addCircle(x, y, 25f, Path.Direction.CCW);
     }
 
     private void moveTouch(float x, float y)
