@@ -119,6 +119,8 @@ public class GraphView extends View
                 Pair<Double, Double> p = getNearestVertex(x, y);
                 pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
                 path2.moveTo(p.first.floatValue(), p.second.floatValue());
+                mx = p.first.floatValue();
+                my = p.second.floatValue();
                 return true;
             }
             vertexes.add(new Pair<>(x, y));
@@ -137,13 +139,6 @@ public class GraphView extends View
             pathHint.moveTo((float) mx, (float) my);
             pathHint.lineTo((float) x, (float) y);
             Pair<Double, Double> p = getNearestVertex(x, y);
-            if(distance(p, x, y) > 0.1f)
-            {
-                //path2.lineTo(p.first.floatValue(), p.second.floatValue());
-                //path2.moveTo(p.first.floatValue(), p.second.floatValue());
-                //pathHint.reset();
-                //pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
-            }
             Log.d("debug", "move");
             invalidate();
         }
@@ -163,6 +158,7 @@ public class GraphView extends View
             dx = Math.abs(x - p.first);
             dy = Math.abs(y - p.second);
             dist = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+            Log.d("debug", dist+"======");
             if(dist < 30f)
                 return true;
         }
@@ -179,11 +175,11 @@ public class GraphView extends View
             dx = Math.abs(x - p.first);
             dy = Math.abs(y - p.second);
             val = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
-            if(val > 0.1f && val < min)
+            if(val < min)
             {
                 min = val;
                 pair = p;
-                Log.d("debug", val+"");
+                Log.d("debug", val+",  x = "+p.first);
             }
         }
         return pair;
