@@ -114,7 +114,7 @@ public class GraphView extends View
 
         if(event.getAction() == MotionEvent.ACTION_DOWN)
         {
-            if (vertexExists(x, y, 50f))
+            if (vertexExists(x, y, 80f))
             {
                 Pair<Double, Double> p = getNearestVertex(x, y);
                 pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
@@ -138,7 +138,7 @@ public class GraphView extends View
             pathHint.reset();
             pathHint.moveTo((float) mx, (float) my);
             pathHint.lineTo((float) x, (float) y);
-            if(vertexExists(x, y, 40f))
+            if(vertexExists(x, y, 80f))
             {
                 pathHint.reset();
                 Pair<Double, Double> p = getNearestVertex(x, y);
@@ -207,6 +207,12 @@ public class GraphView extends View
         dx = Math.abs(x - p.first);
         dy = Math.abs(y - p.second);
         return Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+    }
+
+    public void resetLines()
+    {
+        path2.reset();
+        invalidate();
     }
 
 }
