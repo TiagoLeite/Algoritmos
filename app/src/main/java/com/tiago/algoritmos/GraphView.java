@@ -139,10 +139,10 @@ public class GraphView extends View
             Pair<Double, Double> p = getNearestVertex(x, y);
             if(distance(p, x, y) > 0.1f)
             {
-                path2.lineTo(p.first.floatValue(), p.second.floatValue());
-                path2.moveTo(p.first.floatValue(), p.second.floatValue());
-                pathHint.reset();
-                pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
+                //path2.lineTo(p.first.floatValue(), p.second.floatValue());
+                //path2.moveTo(p.first.floatValue(), p.second.floatValue());
+                //pathHint.reset();
+                //pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
             }
             Log.d("debug", "move");
             invalidate();
