@@ -146,6 +146,8 @@ public class GraphView extends View
                 path2.lineTo(p.first.floatValue(), p.second.floatValue());
                 pathHint.moveTo((float) mx, (float) my);
                 pathHint.lineTo(p.first.floatValue(), p.second.floatValue());
+                mx = p.first;
+                my = p.second;
                 //pathHint.reset();
             }
             Log.d("debug", "move");
