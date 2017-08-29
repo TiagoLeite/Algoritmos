@@ -1,16 +1,15 @@
 package com.tiago.algoritmos;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewDrawer.setLayoutManager(llm);
-        String[] myDataset = new String[]{"BubbleSort", "InsertionSort", "SelectSort"};
+        String[] myDataset = new String[]{"BubbleSort", "InsertionSort", "SelectSort", "GraphFragment"};
         RecyclerDrawerAdapter mAdapter = new RecyclerDrawerAdapter(myDataset);
         recyclerViewDrawer.setAdapter(mAdapter);
 
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentMap.put("BubbleSort", new BubbleSortFragment());
         fragmentMap.put("InsertionSort", new InsertionSortFragment());
         fragmentMap.put("SelectionSort", new SelectionSortFragment());
+        fragmentMap.put("GraphFragment", new GraphFragment());
 
     }
 
@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
                             drawerLayout.closeDrawers();
                             ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
                             view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            Log.d("debug", pos+"");
                             break;
                         case 1:
                             if(lastClicked != null)
@@ -130,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
                             drawerLayout.closeDrawers();
                             ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
                             view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            Log.d("debug", pos+"");
                             break;
                         case 2:
                             if(lastClicked != null)
@@ -143,7 +141,18 @@ public class MainActivity extends AppCompatActivity {
                             drawerLayout.closeDrawers();
                             ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
                             view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            Log.d("debug", pos+"");
+                            break;
+                        case 3:
+                            if(lastClicked != null)
+                            {
+                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
+                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
+                            }
+                            lastClicked = view;
+                            replaceFragment(fragmentMap.get("GraphFragment"));
+                            drawerLayout.closeDrawers();
+                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
+                            view.setBackgroundColor(getResources().getColor(R.color.gray));
                             break;
                         default:
                             break;
