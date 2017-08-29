@@ -5,20 +5,25 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphView extends View
 {
     //private Bitmap bitmap;
     private Canvas canvas;
-    private Path path;
-    private Path path2;
-    private Paint paint, paint2;
+    private Path path, path2, pathHint;
+    private Paint paint, paint2, paintHint;
     private Context context;
-    private boolean firstClick = true;
-    private float mx, my;
+    private double mx, my;
+    private boolean isMoving = false;
+    private List<Pair<Double, Double>> vertexes;
 
     public GraphView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -39,6 +44,14 @@ public class GraphView extends View
         paint2.setStyle(Paint.Style.STROKE);
         paint2.setStrokeJoin(Paint.Join.ROUND);
         paint2.setStrokeWidth(10f);
+        paintHint = new Paint();
+        pathHint = new Path();
+        paintHint.setAntiAlias(true);
+        paintHint.setColor(getResources().getColor(R.color.colorPrimary));
+        paintHint.setStyle(Paint.Style.STROKE);
+        paintHint.setStrokeJoin(Paint.Join.ROUND);
+        paintHint.setStrokeWidth(2f);
+        vertexes = new ArrayList<>();
 
         //canvas.setBitmap(bitmap);
     }
@@ -48,6 +61,7 @@ public class GraphView extends View
         super.onDraw(canvas);
         canvas.drawPath(path, paint);
         canvas.drawPath(path2, paint2);
+        canvas.drawPath(pathHint, paintHint);
     }
 
     /*@Override
@@ -59,71 +73,128 @@ public class GraphView extends View
 
     }*/
 
-    private void onStartTouch(float x, float y)
+    private void drawVertex(double x, double y)
     {
-        if(firstClick)
-            firstClick = false;
-        else
-        {
-            //Paint paint2 = new Paint();
-            //paint2.setAntiAlias(true);
-            //paint.setColor(getResources().getColor(R.color.colorAccent));
-            //paint2.setStyle(Paint.Style.STROKE);
-            //paint2.setStrokeJoin(Paint.Join.ROUND);
-            //paint.setStrokeWidth(10f);
-            path2.moveTo(mx, my);
-            path2.lineTo(x, y);
-            //path.quadTo(mx, my, x, y);
-            //canvas.drawPath(path, paint2);
-        }
-        mx = x;
-        my = y;
-        path.addCircle(x, y, 25f, Path.Direction.CCW);
+        //Paint paint2 = new Paint();
+        //paint2.setAntiAlias(true);
+        //paint.setColor(getResources().getColor(R.color.colorAccent));
+        //paint2.setStyle(Paint.Style.STROKE);
+        //paint2.setStrokeJoin(Paint.Join.ROUND);
+        //paint.setStrokeWidth(10f);
+        //path2.moveTo(mx, my);
+        //path2.lineTo(x, y);
+        //path.quadTo(mx, my, x, y);
+        //canvas.drawPath(path, paint2);
+        //}
+        path.addCircle((float) x, (float) y, 25f, Path.Direction.CCW);
     }
 
-    private void moveTouch(float x, float y)
+    /*private void moveTouch(double x, double y)
     {
-        float dx = Math.abs(x - mx);
-        float dy = Math.abs(y - my);
+        double dx = Math.abs(x - mx);
+        double dy = Math.abs(y - my);
         if(dx >= 5 || dy >= 5)
         {
             path.quadTo(mx, my, (x+mx)/2f, (y+my)/2f);
             mx = x;
             my = y;
         }
-    }
+    }*/
 
-    private void upTouch()
+    /*private void upTouch()
     {
         path.lineTo(mx, my);
-    }
+    }*/
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        double x = event.getX();
+        double y = event.getY();
+
         if(event.getAction() == MotionEvent.ACTION_DOWN)
         {
-            onStartTouch(x, y);
+            if (vertexExists(x, y))
+            {
+                Pair<Double, Double> p = getNearestVertex(x, y);
+                pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
+                path2.moveTo(p.first.floatValue(), p.second.floatValue());
+                return true;
+            }
+            vertexes.add(new Pair<>(x, y));
+            path2.moveTo((float) x, (float)y);
+            pathHint.reset();
+            pathHint.moveTo((float)x, (float)y);
+            drawVertex(x, y);
+            mx = x;
+            my = y;
+            Log.d("debug", "down");
             invalidate();
         }
-        /*switch (event.getAction())
+        else if(event.getAction() == MotionEvent.ACTION_MOVE)
         {
-            case MotionEvent.ACTION_DOWN:
-                onStartTouch(x, y);
-                invalidate();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                moveTouch(x, y);
-                invalidate();
-                break;
-            case MotionEvent.ACTION_UP:
-                upTouch();
-                invalidate();
-                break;
-
-        }*/
+            pathHint.reset();
+            pathHint.moveTo((float) mx, (float) my);
+            pathHint.lineTo((float) x, (float) y);
+            Pair<Double, Double> p = getNearestVertex(x, y);
+            if(distance(p, x, y) > 0.1f)
+            {
+                path2.lineTo(p.first.floatValue(), p.second.floatValue());
+                path2.moveTo(p.first.floatValue(), p.second.floatValue());
+                pathHint.reset();
+                pathHint.moveTo(p.first.floatValue(), p.second.floatValue());
+            }
+            Log.d("debug", "move");
+            invalidate();
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP)
+        {
+            pathHint.reset();
+            invalidate();
+        }
         return true;
+    }
+
+    private boolean vertexExists(double x, double y)
+    {
+        double dx, dy, dist;
+        for(Pair<Double, Double> p : vertexes)
+        {
+            dx = Math.abs(x - p.first);
+            dy = Math.abs(y - p.second);
+            dist = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+            if(dist < 30f)
+                return true;
+        }
+        return false;
+    }
+
+    private Pair<Double, Double> getNearestVertex(double x, double y)
+    {
+        double dx, dy;
+        double val, min = Double.MAX_VALUE;
+        Pair<Double, Double> pair = null;
+        for(Pair<Double, Double> p : vertexes)
+        {
+            dx = Math.abs(x - p.first);
+            dy = Math.abs(y - p.second);
+            val = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+            if(val > 0.1f && val < min)
+            {
+                min = val;
+                pair = p;
+                Log.d("debug", val+"");
+            }
+        }
+        return pair;
+    }
+
+    private double distance(Pair<Double, Double> p, double x, double y)
+    {
+        double dx, dy;
+        dx = Math.abs(x - p.first);
+        dy = Math.abs(y - p.second);
+        return Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
     }
 
 }
