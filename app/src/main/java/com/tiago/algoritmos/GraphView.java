@@ -141,7 +141,7 @@ public class GraphView extends View
             pathHint.reset();
             pathHint.moveTo((float) mx, (float) my);
             pathHint.lineTo((float) x, (float) y);
-            if(vertexExists(x, y, 80f))
+            if(vertexExists(x, y, 80f) && distance(getNearestVertex(mx, my), x, y) >= 80f)
             {
                 pathHint.reset();
                 Pair<Double, Double> p = getNearestVertex(x, y);
@@ -149,6 +149,8 @@ public class GraphView extends View
                 path2.lineTo(p.first.floatValue(), p.second.floatValue());
                 pathHint.moveTo((float) mx, (float) my);
                 pathHint.lineTo(p.first.floatValue(), p.second.floatValue());
+
+                Log.d("debug", "D = "+distance(p, x, y)+"");
                 TextView textView = new TextView(getContext());
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 textView.setPadding(8, 8, 8, 8);
@@ -157,6 +159,7 @@ public class GraphView extends View
                 ((ViewGroup)this.getParent()).addView(textView);
                 textView.setText("3");
                 textView.setTextColor(getResources().getColor(R.color.colorAccent));
+
                 /*textView.animate()
                         .x((float) ((mx+p.first.floatValue())/2f))
                         .y((float) ((my+p.second.floatValue())/2f))
