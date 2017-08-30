@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +149,18 @@ public class GraphView extends View
                 path2.lineTo(p.first.floatValue(), p.second.floatValue());
                 pathHint.moveTo((float) mx, (float) my);
                 pathHint.lineTo(p.first.floatValue(), p.second.floatValue());
+                TextView textView = new TextView(getContext());
+                textView.setTypeface(Typeface.DEFAULT_BOLD);
+                textView.setPadding(8, 8, 8, 8);
+                textView.setX((float) ((mx+p.first.floatValue())/2f));
+                textView.setY((float) ((my+p.second.floatValue())/2f));
+                ((ViewGroup)this.getParent()).addView(textView);
+                textView.setText("3");
+                textView.setTextColor(getResources().getColor(R.color.colorAccent));
+                /*textView.animate()
+                        .x((float) ((mx+p.first.floatValue())/2f))
+                        .y((float) ((my+p.second.floatValue())/2f))
+                        .setDuration(500);*/
                 mx = p.first;
                 my = p.second;
                 //pathHint.reset();
@@ -155,12 +170,22 @@ public class GraphView extends View
         }
         else if(event.getAction() == MotionEvent.ACTION_UP)
         {
-            if(vertexExists(x, y, 10f))
+            /*if(vertexExists(x, y, 10f))
             {
                 Pair<Double, Double> p = getNearestVertex(x, y);
                 path2.moveTo((float) mx, (float) my);
                 path2.lineTo(p.first.floatValue(), p.second.floatValue());
-            }
+                TextView textView = new TextView(getContext());
+                //textView.setX((float) mx);
+                //textView.setY((float) my);
+                ((ViewGroup)this.getParent()).addView(textView);
+                textView.setText("3");
+                textView.setTextColor(Color.BLACK);
+                textView.animate()
+                        .x((float) ((mx+p.first.floatValue())/2f))
+                        .y((float) ((my+p.second.floatValue())/2f))
+                        .setDuration(500);
+            }*/
             pathHint.reset();
             Log.d("debug", "move");
             invalidate();
