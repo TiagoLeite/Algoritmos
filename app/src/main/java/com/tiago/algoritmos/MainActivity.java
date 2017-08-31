@@ -1,5 +1,6 @@
 package com.tiago.algoritmos;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,7 +41,15 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewDrawer.setLayoutManager(llm);
-        String[] myDataset = new String[]{"BubbleSort", "InsertionSort", "SelectSort", "GraphFragment"};
+        DrawerItem[] myDataset = new DrawerItem[]
+        {
+            new DrawerItem("Ordenação", DrawerItem.TYPE_TITLE),
+            new DrawerItem("BubbleSort", DrawerItem.TYPE_TOPIC),
+            new DrawerItem("InsertionSort", DrawerItem.TYPE_TOPIC),
+            new DrawerItem("SelectionSort", DrawerItem.TYPE_TOPIC),
+            new DrawerItem("Grafos", DrawerItem.TYPE_TITLE),
+            new DrawerItem("GraphFragment", DrawerItem.TYPE_TOPIC)
+        };
         RecyclerDrawerAdapter mAdapter = new RecyclerDrawerAdapter(myDataset);
         recyclerViewDrawer.setAdapter(mAdapter);
 
@@ -76,88 +85,84 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class RecyclerDrawerAdapter extends RecyclerView.Adapter<RecyclerDrawerAdapter.ViewHolder>
+    private class RecyclerDrawerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     {
-        private String[] mDataset;
+        private DrawerItem[] mDataset;
         private View lastClicked;
 
-        RecyclerDrawerAdapter(String[] myDataset) {
+        RecyclerDrawerAdapter(DrawerItem[] myDataset) {
             mDataset = myDataset;
         }
 
         @Override
-        public RecyclerDrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                    int viewType) {
             // create a new view
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.drawer_row, parent, false);
-            return new ViewHolder(v);
+            View view;
+            switch (viewType)
+            {
+                case DrawerItem.TYPE_TOPIC:
+                    view = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.drawer_row_topic, parent, false);
+                    return new ViewHolderTopic(view);
+                default://title
+                    view = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.drawer_row_title, parent, false);
+                    return new ViewHolderTitle(view);
+            }
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public int getItemViewType(int position) {
+            return mDataset[position].getItemType();
+        }
 
-            final int pos = holder.getAdapterPosition();
-            holder.mTextView.setText(mDataset[position]);
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+            int pos = holder.getAdapterPosition();
+            short type = mDataset[pos].getItemType();
+
+            switch (type)
+            {
+                case DrawerItem.TYPE_TOPIC:
+                    addItemTypeTopic(holder, pos);
+                    break;
+                case DrawerItem.TYPE_TITLE:
+                    addItemTypeTitle(holder, pos);
+                    break;
+            }
+        }
+
+        private void addItemTypeTitle(RecyclerView.ViewHolder viewHolder, int position)
+        {
+            final String itemText = mDataset[position].getItemText();
+            ViewHolderTitle holder = (ViewHolderTitle)viewHolder;
+            holder.mTextView.setText(itemText);
+        }
+
+        private void addItemTypeTopic(RecyclerView.ViewHolder viewHolder, int position)
+        {
+            final String itemText = mDataset[position].getItemText();
+            ViewHolderTopic holder = (ViewHolderTopic)viewHolder;
+            holder.mTextView.setText(itemText);
             holder.mTextView.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View view)
                 {
-                    switch (pos)
+                    if(lastClicked != null)
                     {
-                        case 0:
-                            if(lastClicked != null)
-                            {
-                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
-                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            }
-                            lastClicked = view;
-                            replaceFragment(fragmentMap.get("BubbleSort"));
-                            drawerLayout.closeDrawers();
-                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
-                            view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            break;
-                        case 1:
-                            if(lastClicked != null)
-                            {
-                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
-                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            }
-                            lastClicked = view;
-                            replaceFragment(fragmentMap.get("InsertionSort"));
-                            drawerLayout.closeDrawers();
-                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
-                            view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            break;
-                        case 2:
-                            if(lastClicked != null)
-                            {
-                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
-                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            }
-                            lastClicked = view;
-                            replaceFragment(fragmentMap.get("SelectionSort"));
-                            drawerLayout.closeDrawers();
-                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
-                            view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            break;
-                        case 3:
-                            if(lastClicked != null)
-                            {
-                                ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
-                                lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            }
-                            lastClicked = view;
-                            replaceFragment(fragmentMap.get("GraphFragment"));
-                            drawerLayout.closeDrawers();
-                            ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
-                            view.setBackgroundColor(getResources().getColor(R.color.gray));
-                            break;
-                        default:
-                            break;
-
+                        ((TextView)lastClicked).setTextColor(getResources().getColor(R.color.colorPrimary));
+                        ((TextView)lastClicked).setTypeface(Typeface.DEFAULT);
+                        lastClicked.setBackgroundColor(getResources().getColor(R.color.transparent));
                     }
+                    lastClicked = view;
+                    replaceFragment(fragmentMap.get(itemText));
+                    drawerLayout.closeDrawers();
+                    ((TextView)view).setTextColor(getResources().getColor(R.color.colorPrimary));
+                    ((TextView)view).setTypeface(Typeface.DEFAULT_BOLD);
+                    view.setBackgroundColor(getResources().getColor(R.color.gray));
                 }
             });
         }
@@ -167,14 +172,46 @@ public class MainActivity extends AppCompatActivity {
             return mDataset.length;
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder
+        class ViewHolderTopic extends RecyclerView.ViewHolder
         {
             TextView mTextView;
-            ViewHolder(View v)
+            ViewHolderTopic(View v)
             {
                 super(v);
-                mTextView = (TextView) v.findViewById(R.id.tv_row);
+                mTextView = (TextView) v.findViewById(R.id.tv_row_topic);
             }
+        }
+
+        class ViewHolderTitle extends RecyclerView.ViewHolder
+        {
+            TextView mTextView;
+            ViewHolderTitle(View v)
+            {
+                super(v);
+                mTextView = (TextView) v.findViewById(R.id.tv_title);
+            }
+        }
+    }
+
+    private class DrawerItem
+    {
+        public static final short TYPE_TITLE = 0;
+        public static final short TYPE_TOPIC = 1;
+        private String itemText;
+        private short itemType;
+
+        public DrawerItem (String text, short type)
+        {
+            this.itemText = text;
+            this.itemType = type;
+        }
+
+        public short getItemType() {
+            return itemType;
+        }
+
+        public String getItemText() {
+            return itemText;
         }
     }
 }
