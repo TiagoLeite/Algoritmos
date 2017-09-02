@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -54,7 +56,16 @@ public class BubbleSortFragment extends Fragment
 
         tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
 
+        setHasOptionsMenu(true);
+
         return view;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sort_menu, menu);
     }
 
     @Override
