@@ -2,6 +2,7 @@ package com.tiago.algoritmos;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -135,72 +136,6 @@ public class BubbleSortFragment extends Fragment
         });
     }
 
-    private void animate(AlgorithmStep step)
-    {
-        animateBars(step);
-        showTextInfo(step);
-    }
-
-    private void animateBars(final AlgorithmStep step)
-    {
-        if(!step.getAnimate()) return;
-        getActivity().runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                View b1 = barsContainer.findViewWithTag(step.getPosition1());
-                View b2 = barsContainer.findViewWithTag(step.getPosition2());
-                b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-
-                for(int i = 0; i < barsContainer.getChildCount(); i++)
-                {
-                    View v = barsContainer.getChildAt(i);
-                    if(v.equals(b1) || v.equals(b2))
-                        continue;
-                    v.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
-                }
-
-                if(step.isSwap())
-                {
-                    mp.start();
-                    float x1 = b1.getX();
-                    float x2 = b2.getX();
-                    b1.animate()
-                            .x(x2)
-                            .setDuration(500);
-
-                    b2.animate()
-                            .x(x1)
-                            .setDuration(500);
-                }
-                tvInfo.setText(step.getStepDescription());
-                //setBarSortedOk(step.getBarOk());
-            }
-        });
-    }
-
-    private void showTextInfo(final AlgorithmStep step)
-    {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tvInfo.setText(step.getStepDescription());
-            }
-        });
-    }
-
-    private void setBarSortedOk(final int pos)
-    {
-        if(pos < 0) return;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                barsContainer.findViewWithTag(pos).findViewById(R.id.check_ok).setVisibility(View.VISIBLE);
-            }
-        });
-    }
 
     private void addBars(int numBar)
     {
@@ -325,23 +260,101 @@ public class BubbleSortFragment extends Fragment
                 {
                     if(vet[j] > vet[j+1])
                     {
+                        step = new AlgorithmStep(vet[j], vet[j+1], false);
+                        step.setStepDescription("Comparando valores " + vet[j] + " e " + vet[j+1]);
+                        algorithmSteps.add(step);
+                        step = new AlgorithmStep(vet[j], vet[j+1], true);
+                        step.setStepDescription("Como " + vet[j] + " > " + vet[j+1] + ", trocam-se os valores no vetor");
+                        algorithmSteps.add(step);
                         aux = vet[j];
                         vet[j] = vet[j+1];
                         vet[j+1] = aux;
-                        step = new AlgorithmStep(vet[j], vet[j+1], true);
-                        step.setStepDescription("step " + vet[j]);
-                        algorithmSteps.add(step);
                     }
                     else
                     {
                         step = new AlgorithmStep(vet[j], vet[j+1], false);
-                        step.setStepDescription("step " + vet[j]);
+                        step.setStepDescription("Comparando valores " + vet[j] + " e " + vet[j+1]);
                         algorithmSteps.add(step);
                     }
                 }
                 if(step != null)
                     step.setBarOk(vet[size-i-1]);
             }
+        }
+
+        private void animate(AlgorithmStep step)
+        {
+            showTextInfo(step);
+            animateBars(step);
+        }
+
+        private void animateBars(final AlgorithmStep step)
+        {
+            if(!step.getAnimate()) return;
+            getActivity().runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    View b1 = barsContainer.findViewWithTag(step.getPosition1());
+                    View b2 = barsContainer.findViewWithTag(step.getPosition2());
+                    b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+                    for(int i = 0; i < barsContainer.getChildCount(); i++)
+                    {
+                        View v = barsContainer.getChildAt(i);
+                        if(v.equals(b1) || v.equals(b2))
+                            continue;
+                        v.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
+                    }
+
+                    if(step.isSwap())
+                    {
+                        float x1 = b1.getX();
+                        float x2 = b2.getX();
+                        b1.animate()
+                                .x(x2)
+                                .setStartDelay(1000)
+                                .setDuration(500);
+
+                        b2.animate()
+                                .x(x1)
+                                .setStartDelay(1000)
+                                .setDuration(500);
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable(){
+                            @Override
+                            public void run() {
+                                mp.start();
+                            }
+                        }, 1000);
+                    }
+                    //tvInfo.setText(step.getStepDescription());
+                    //setBarSortedOk(step.getBarOk());
+                }
+            });
+        }
+
+        private void showTextInfo(final AlgorithmStep step)
+        {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvInfo.setText(step.getStepDescription());
+                }
+            });
+        }
+
+        private void setBarSortedOk(final int pos)
+        {
+            if(pos < 0) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    barsContainer.findViewWithTag(pos).findViewById(R.id.check_ok).setVisibility(View.VISIBLE);
+                }
+            });
         }
 
         public int getCurrentStep() {
