@@ -3,4 +3,11 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
 
+    <!--BubbleSort Strings:-->
+    <string name="bubble_intro_0">Técnica básica: Comparam-se dois elementos e trocam-se suas posições
+        se o segundo elemento é menor do que o primeiro</string>
+    <string name="bubble_intro_1">São feitas várias passagens pelo vetor</string>
+    <string name="bubble_intro_2">Em cada passagem, comparam-se dois elementos adjacentes</string>
+    <string name="bubble_intro_3">Se estes elementos estiverem fora de ordem, eles são trocados</string>
+
 </resources>

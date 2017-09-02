@@ -27,9 +27,9 @@ public class BubbleSortFragment extends Fragment
     private View rootView;
     private BubbleSortThread bubbleSortThread;
     private MediaPlayer mp;
-    private List<AlgorithmStep> steps;
+    private List<AlgorithmStep> algorithmSteps;
     private TextView tvInfo;
-    private GraphView graph;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -52,8 +52,6 @@ public class BubbleSortFragment extends Fragment
         rootView = view;
 
         tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
-
-        graph = (GraphView)rootView.findViewById(R.id.graph);
 
         return view;
     }
@@ -137,8 +135,15 @@ public class BubbleSortFragment extends Fragment
         });
     }
 
+    private void animate(AlgorithmStep step)
+    {
+        animateBars(step);
+        showTextInfo(step);
+    }
+
     private void animateBars(final AlgorithmStep step)
     {
+        if(!step.getAnimate()) return;
         getActivity().runOnUiThread(new Runnable()
         {
             @Override
@@ -170,7 +175,18 @@ public class BubbleSortFragment extends Fragment
                             .x(x1)
                             .setDuration(500);
                 }
-                tvInfo.setText(step.getStateDescripton());
+                tvInfo.setText(step.getStepDescription());
+                //setBarSortedOk(step.getBarOk());
+            }
+        });
+    }
+
+    private void showTextInfo(final AlgorithmStep step)
+    {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvInfo.setText(step.getStepDescription());
             }
         });
     }
@@ -242,14 +258,13 @@ public class BubbleSortFragment extends Fragment
 
         private void runNextStep()
         {
-            if(currentStep >= steps.size())
+            if(currentStep >= algorithmSteps.size())
             {
                 finished = true;
                 return;
             }
-            AlgorithmStep step = steps.get(currentStep++);
-            animateBars(step);
-            setBarSortedOk(step.getBarOk());
+            AlgorithmStep step = algorithmSteps.get(currentStep++);
+            animate(step);
         }
 
         private void runPreviousStep()
@@ -258,14 +273,13 @@ public class BubbleSortFragment extends Fragment
             {
                 return;
             }
-            AlgorithmStep step = steps.get(--currentStep);
-            animateBars(step);
-            setBarSortedOk(step.getBarOk());
+            AlgorithmStep step = algorithmSteps.get(--currentStep);
+            animate(step);
         }
 
         private void runAuto()
         {
-            for(AlgorithmStep step : steps)
+            for(AlgorithmStep step : algorithmSteps)
             {
                 try
                 {
@@ -274,14 +288,14 @@ public class BubbleSortFragment extends Fragment
                         while (suspended)
                             this.wait();
                     }
-                    animateBars(step);
+                    animate(step);
                     Thread.sleep(700);
                 }
                 catch (Exception e)
                 {
                     return;
                 }
-                setBarSortedOk(step.getBarOk());
+                //setBarSortedOk(step.getBarOk());
             }
         }
 
@@ -298,8 +312,12 @@ public class BubbleSortFragment extends Fragment
 
         private void runAlgorithm()
         {
-            steps = new ArrayList<>();
+            algorithmSteps = new ArrayList<>();
             AlgorithmStep step = null;
+            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_0)));
+            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_1)));
+            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_2)));
+            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_3)));
             int size = vet.length, aux;
             for(int i = 0; i < size; i++)
             {
@@ -311,17 +329,18 @@ public class BubbleSortFragment extends Fragment
                         vet[j] = vet[j+1];
                         vet[j+1] = aux;
                         step = new AlgorithmStep(vet[j], vet[j+1], true);
-                        step.setStepDescripton("step " + bubbleSortThread.getCurrentStep());
-                        steps.add(step);
+                        step.setStepDescription("step " + vet[j]);
+                        algorithmSteps.add(step);
                     }
                     else
                     {
                         step = new AlgorithmStep(vet[j], vet[j+1], false);
-                        step.setStepDescripton("step " + bubbleSortThread.getCurrentStep());
-                        steps.add(step);
+                        step.setStepDescription("step " + vet[j]);
+                        algorithmSteps.add(step);
                     }
                 }
-                step.setBarOk(vet[size-i-1]);//nao vai dar null pointer nao!
+                if(step != null)
+                    step.setBarOk(vet[size-i-1]);
             }
         }
 
