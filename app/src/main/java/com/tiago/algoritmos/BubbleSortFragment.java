@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import junit.framework.Test;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +38,7 @@ public class BubbleSortFragment extends Fragment
     private MediaPlayer mp;
     private List<AlgorithmStep> algorithmSteps;
     private TextView tvInfo;
+    private List<TextView> algorithmCodeLines;
 
     @Nullable
     @Override
@@ -52,10 +55,6 @@ public class BubbleSortFragment extends Fragment
 
         addBars(10);
 
-        /*WebView webview = (WebView)view.findViewById(R.id.code_algorithm);
-        String summary = "<html><body>You scored <b>192</b> points.</body></html>";
-        webview.loadData(summary, "text/html", null);*/
-
         rootView = view;
 
         tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
@@ -64,12 +63,12 @@ public class BubbleSortFragment extends Fragment
 
         ViewGroup codeContainer = (ViewGroup)view.findViewById(R.id.code_container);
 
-        for (int k=1; k <= 10; k++)
+        algorithmCodeLines = new ArrayList<>(10);
+
+        for (int k=0; k < 10; k++)
         {
             TextView tvCodeLine = new TextView(view.getContext());
-            if (k == 5)
-                tvCodeLine.setBackgroundColor(view.getResources().getColor(R.color.lightBlue));
-            //tvCodeLine.setGravity(Gravity.CENTER_HORIZONTAL);
+            algorithmCodeLines.add(tvCodeLine);
             tvCodeLine.setTypeface(Typeface.createFromAsset(view.
                     getContext().getAssets(),"FiraMono-Medium.otf"));
             int stringId = getResources().getIdentifier("bubble_line_"+k,
@@ -255,7 +254,7 @@ public class BubbleSortFragment extends Fragment
                             this.wait();
                     }
                     animate(step);
-                    Thread.sleep(700);
+                    Thread.sleep(500);
                 }
                 catch (Exception e)
                 {
@@ -280,10 +279,22 @@ public class BubbleSortFragment extends Fragment
         {
             algorithmSteps = new ArrayList<>();
             AlgorithmStep step = null;
-            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_0)));
-            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_1)));
-            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_2)));
-            algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_3)));
+            //algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_0)));
+            //algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_1)));
+            //algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_2)));
+            //algorithmSteps.add(new AlgorithmStep(getResources().getString(R.string.bubble_intro_3)));
+            step = new AlgorithmStep(-1, -1, false);
+            step.setCodeLine(0);
+            algorithmSteps.add(step);
+
+            step = new AlgorithmStep(-1, -1, false);
+            step.setCodeLine(1);
+            algorithmSteps.add(step);
+
+            step = new AlgorithmStep(-1, -1, false);
+            step.setCodeLine(2);
+            algorithmSteps.add(step);
+
             int size = vet.length, aux;
             for(int i = 0; i < size; i++)
             {
@@ -297,6 +308,7 @@ public class BubbleSortFragment extends Fragment
                         step = new AlgorithmStep(vet[j], vet[j+1], true);
                         step.setStepDescription("Como " + vet[j] + " > " + vet[j+1] + ", trocam-se os valores no vetor");
                         algorithmSteps.add(step);
+                        step.setCodeLine(4);
                         aux = vet[j];
                         vet[j] = vet[j+1];
                         vet[j+1] = aux;
@@ -305,6 +317,7 @@ public class BubbleSortFragment extends Fragment
                     {
                         step = new AlgorithmStep(vet[j], vet[j+1], false);
                         step.setStepDescription("Comparando valores " + vet[j] + " e " + vet[j+1]);
+                        step.setCodeLine(3);
                         algorithmSteps.add(step);
                     }
                 }
@@ -316,7 +329,10 @@ public class BubbleSortFragment extends Fragment
         private void animate(AlgorithmStep step)
         {
             showTextInfo(step);
-            animateBars(step);
+            if (step.getPosition1() != -1)
+                animateBars(step);
+            if (step.getCodeLine() != -1)
+                animateCode(step);
         }
 
         private void animateBars(final AlgorithmStep step)
@@ -398,6 +414,21 @@ public class BubbleSortFragment extends Fragment
 
         public boolean isFinished() {
             return finished;
+        }
+    }
+
+    private void animateCode(AlgorithmStep step)
+    {
+        int lineNumber = step.getCodeLine();
+        if (lineNumber != -1)
+        {
+            final TextView tvLineCode = algorithmCodeLines.get(lineNumber);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.lightBlue));
+                }
+            });
         }
     }
 }
