@@ -1,12 +1,16 @@
 package com.tiago.algoritmos;
 
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
+import android.text.Html;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,6 +61,22 @@ public class BubbleSortFragment extends Fragment
         tvInfo = (TextView)rootView.findViewById(R.id.tv_info);
 
         setHasOptionsMenu(true);
+
+        ViewGroup codeContainer = (ViewGroup)view.findViewById(R.id.code_container);
+
+        for (int k=1; k <= 10; k++)
+        {
+            TextView tvCodeLine = new TextView(view.getContext());
+            if (k == 5)
+                tvCodeLine.setBackgroundColor(view.getResources().getColor(R.color.lightBlue));
+            //tvCodeLine.setGravity(Gravity.CENTER_HORIZONTAL);
+            tvCodeLine.setTypeface(Typeface.createFromAsset(view.
+                    getContext().getAssets(),"FiraMono-Medium.otf"));
+            int stringId = getResources().getIdentifier("bubble_line_"+k,
+                    "string", getContext().getPackageName());
+            tvCodeLine.setText(Html.fromHtml(getString(stringId)));
+            codeContainer.addView(tvCodeLine);
+        }
 
         return view;
     }

@@ -10,4 +10,49 @@
     <string name="bubble_intro_2">Em cada passagem, comparam-se dois elementos adjacentes</string>
     <string name="bubble_intro_3">Se estes elementos estiverem fora de ordem, eles são trocados</string>
 
+    <string name="some_text"><![CDATA[<font color=\'#cc0000\'>Some</font>]]> </string>
+
+    <string name="bubble_line_1"><![CDATA[
+        <font color=\'#118811\'>void </font>bubbleSort(<font color=\'#118811\'>int</font> arr[]){\n</string>]]>
+    </string>
+
+    <string name="bubble_line_2"><![CDATA[
+        \tint n = arr.length;\n</string>]]>
+    </string>
+
+    <string name="bubble_line_3"><![CDATA[
+            \tfor (int i = 0; i < n-1; i++)\n</string>]]>
+    </string>
+
+    <string name="bubble_line_4"><![CDATA[
+            \t\tfor (int j = 0; j < n-i-1; j++)\n</string>]]>
+    </string>
+
+    <string name="bubble_line_5"><![CDATA[
+            \t\t\tif (arr[j] > arr[j+1]){\n</string>]]>
+    </string>
+
+    <string name="bubble_line_6"><![CDATA[
+        \t\t\t\t\t\tint temp = arr[j];\n</string>]]>
+    </string>
+
+    <string name="bubble_line_7"><![CDATA[
+        \t\t\t\t\t\tarr[j] = arr[j+1];\n</string>]]>
+    </string>
+
+    <string name="bubble_line_8"><![CDATA[
+        \t\t\t\t\t\tarr[j+1] = temp;\n</string>]]>
+    </string>
+
+    <string name="bubble_line_9"><![CDATA[
+        \t\t\t}\n</string>]]>
+    </string>
+
+    <string name="bubble_line_10"><![CDATA[
+        }\n</string>]]>
+    </string>
+    <!--
+    \t\t}\n
+    \t}\n>-->
+
 </resources>
