@@ -3,15 +3,15 @@ package com.tiago.algoritmos;
 class AlgorithmStep
 {
     private String stepDescription;
-    private int position1, position2, codeLine, i, j;
+    private int arrValue1, arrValue2, codeLine, i, j;
     private boolean swap;
     private int barOk = -1;
     private boolean animate;
 
-    public AlgorithmStep(int position1, int position2, boolean swap)
+    public AlgorithmStep(int arrValue1, int arrValue2, boolean swap)
     {
-        this.position1 = position1;
-        this.position2 = position2;
+        this.arrValue1 = arrValue1;
+        this.arrValue2 = arrValue2;
         this.swap = swap;
         this.animate = true;
         this.codeLine = -1;
@@ -19,8 +19,8 @@ class AlgorithmStep
 
     public AlgorithmStep(int i, int j)
     {
-        this.position1 = -1;
-        this.position2 = -1;
+        this.arrValue1 = -1;
+        this.arrValue2 = -1;
         this.animate = true;
         this.codeLine = -1;
         this.i = i;
@@ -40,12 +40,12 @@ class AlgorithmStep
         this.stepDescription = stateDescription;
     }
 
-    public int getPosition1() {
-        return position1;
+    public int getArrValue1() {
+        return arrValue1;
     }
 
-    public int getPosition2() {
-        return position2;
+    public int getArrValue2() {
+        return arrValue2;
     }
 
     public boolean isSwap() {

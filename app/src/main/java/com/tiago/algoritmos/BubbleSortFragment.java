@@ -22,7 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import com.github.florent37.viewtooltip.ViewTooltip;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -123,15 +125,6 @@ public class BubbleSortFragment extends Fragment
                     }
                 });
             }
-            /*if (k == 3)
-            {//TODO: set global current step in class
-                ViewTooltip
-                        .on(tvCodeLine)
-                        .autoHide(true, 2000)
-                        .position(ViewTooltip.Position.TOP)
-                        .text("i = " + step.getI() + ", j = " + step.getJ())
-                        .show();
-            }*/
             algorithmCodeLines.add(tvCodeLine);
             tvCodeLine.setTypeface(Typeface.createFromAsset(view.
                     getContext().getAssets(),"FiraMono-Medium.otf"));
@@ -363,7 +356,7 @@ public class BubbleSortFragment extends Fragment
             int size = vet.length, aux;
             for(int i = 0; i < size; i++)
             {
-                step = new AlgorithmStep(-1, -1, false);
+                step = new AlgorithmStep(i, -1);
                 step.setCodeLine(2);
                 algorithmSteps.add(step);
                 for(int j = 0; j < size-1-i; j++)
@@ -395,6 +388,9 @@ public class BubbleSortFragment extends Fragment
                     }
                 }
             }
+            step = new AlgorithmStep(-1, -1, false);
+            step.setCodeLine(6);
+            algorithmSteps.add(step);
         }
 
         private void animate(AlgorithmStep step)
@@ -405,7 +401,7 @@ public class BubbleSortFragment extends Fragment
         private void animate(AlgorithmStep step, AlgorithmStep prevStep)
         {
             showTextInfo(step);
-            if (step.getPosition1() != -1)
+            if (step.getArrValue1() != -1)
                 animateBars(step);
             if (step.getCodeLine() != -1)
                 animateCode(step, prevStep);
@@ -421,8 +417,8 @@ public class BubbleSortFragment extends Fragment
                 @Override
                 public void run()
                 {
-                    View b1 = barsContainer.findViewWithTag(step.getPosition1());
-                    View b2 = barsContainer.findViewWithTag(step.getPosition2());
+                    View b1 = barsContainer.findViewWithTag(step.getArrValue1());
+                    View b2 = barsContainer.findViewWithTag(step.getArrValue2());
                     b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
@@ -509,6 +505,42 @@ public class BubbleSortFragment extends Fragment
                         tvLineCodePrev.setBackgroundColor(getResources().getColor(R.color.white));
                     }
                     tvLineCode.setBackgroundColor(getResources().getColor(R.color.lightCodeHighlight));
+                    if(lineNumber == 3)
+                    {
+                        ViewTooltip
+                                .on(tvLineCode)
+                                .autoHide(true, 2000)
+                                .position(ViewTooltip.Position.TOP)
+                                .text("j = " + step.getJ())
+                                .color(getResources().getColor(R.color.colorPrimaryLight))
+                                .textTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                                .textColor(getResources().getColor(R.color.primaryText))
+                                .show();
+                    }
+                    else if(lineNumber == 2)
+                    {
+                        ViewTooltip
+                                .on(tvLineCode)
+                                .autoHide(true, 2000)
+                                .position(ViewTooltip.Position.TOP)
+                                .text("i = " + step.getI())
+                                .color(getResources().getColor(R.color.colorPrimaryLight))
+                                .textColor(getResources().getColor(R.color.primaryText))
+                                .textTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                                .show();
+                    }
+                    else if(lineNumber == 4)
+                    {
+                        ViewTooltip
+                                .on(tvLineCode)
+                                .autoHide(true, 2000)
+                                .position(ViewTooltip.Position.TOP)
+                                .text(step.getArrValue1() + " > " + step.getArrValue2() + " ?")
+                                .color(getResources().getColor(R.color.colorPrimaryLight))
+                                .textColor(getResources().getColor(R.color.primaryText))
+                                .textTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                                .show();
+                    }
                 }
             });
         }
