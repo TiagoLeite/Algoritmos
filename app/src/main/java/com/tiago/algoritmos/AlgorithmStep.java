@@ -3,7 +3,7 @@ package com.tiago.algoritmos;
 class AlgorithmStep
 {
     private String stepDescription;
-    private int position1, position2, codeLine;
+    private int position1, position2, codeLine, i, j;
     private boolean swap;
     private int barOk = -1;
     private boolean animate;
@@ -15,6 +15,16 @@ class AlgorithmStep
         this.swap = swap;
         this.animate = true;
         this.codeLine = -1;
+    }
+
+    public AlgorithmStep(int i, int j)
+    {
+        this.position1 = -1;
+        this.position2 = -1;
+        this.animate = true;
+        this.codeLine = -1;
+        this.i = i;
+        this.j = j;
     }
 
     public AlgorithmStep(String stepDescription)
@@ -61,5 +71,13 @@ class AlgorithmStep
 
     public void setCodeLine(int codeLine) {
         this.codeLine = codeLine;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public int getJ() {
+        return j;
     }
 }

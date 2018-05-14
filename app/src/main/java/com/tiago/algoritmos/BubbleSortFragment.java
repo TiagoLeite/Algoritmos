@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,9 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
 import com.github.florent37.viewtooltip.ViewTooltip;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +34,7 @@ public class BubbleSortFragment extends Fragment
     private static final int MILLIS_DELAY = 2000;
     private LinearLayout barsContainer;
     private ViewGroup container;
-    private int vet[];
+    private int vet[], curI, curJ;//current value of i and j
     private View rootView;
     private BubbleSortThread bubbleSortThread;
     private MediaPlayer mp;
@@ -46,7 +43,6 @@ public class BubbleSortFragment extends Fragment
     private List<TextView> algorithmCodeLines;
     private PopupWindow popupWindow;
     private LayoutInflater layoutInflater;
-    private CardView cardCode;
 
     @Nullable
     @Override
@@ -61,7 +57,7 @@ public class BubbleSortFragment extends Fragment
 
         barsContainer = (LinearLayout) view.findViewById(R.id.bars_container);
 
-        addBars(10);
+        addBars(5);
 
         rootView = view;
 
@@ -69,9 +65,9 @@ public class BubbleSortFragment extends Fragment
 
         setHasOptionsMenu(true);
 
-        cardCode = (CardView) rootView.findViewById(R.id.card_code);
+        //cardCode = (CardView) rootView.findViewById(R.id.card_code);
 
-        ViewGroup codeContainer = (ViewGroup)view.findViewById(R.id.code_container);
+        ViewGroup codeContainer = view.findViewById(R.id.code_container);
 
         algorithmCodeLines = new ArrayList<>(7);
 
@@ -85,12 +81,6 @@ public class BubbleSortFragment extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        /*ViewTooltip
-                                .on(v)
-                                .autoHide(true, 2000)
-                                .position(ViewTooltip.Position.TOP)
-                                .text("Right")
-                                .show();*/
                         layoutInflater = (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         if (layoutInflater != null) {
                             ViewGroup popupContainer = (ViewGroup) layoutInflater.inflate(R.layout.bubble_swap_func, null);
@@ -103,7 +93,7 @@ public class BubbleSortFragment extends Fragment
                     private void setupPopupWindow(ViewGroup popupContainer, View v)
                     {
                         TextView tvFuncCodeLine;
-                        ViewGroup codeFuncContainer = (ViewGroup)popupContainer.findViewById(R.id.func_container);
+                        ViewGroup codeFuncContainer = popupContainer.findViewById(R.id.func_container);
                         for (int p=0; p < 5; p++)
                         {
                             tvFuncCodeLine = new TextView(rootView.getContext());
@@ -133,6 +123,15 @@ public class BubbleSortFragment extends Fragment
                     }
                 });
             }
+            /*if (k == 3)
+            {//TODO: set global current step in class
+                ViewTooltip
+                        .on(tvCodeLine)
+                        .autoHide(true, 2000)
+                        .position(ViewTooltip.Position.TOP)
+                        .text("i = " + step.getI() + ", j = " + step.getJ())
+                        .show();
+            }*/
             algorithmCodeLines.add(tvCodeLine);
             tvCodeLine.setTypeface(Typeface.createFromAsset(view.
                     getContext().getAssets(),"FiraMono-Medium.otf"));
@@ -160,7 +159,7 @@ public class BubbleSortFragment extends Fragment
 
     private void setup()
     {
-        ImageView playPause = (ImageView)rootView.findViewById(R.id.play_pause);
+        ImageView playPause = rootView.findViewById(R.id.play_pause);
         mp = MediaPlayer.create(getActivity(), swap);
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +175,7 @@ public class BubbleSortFragment extends Fragment
                     {
 
                         bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_AUTO);
+                        ((ImageView)view).setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.pause));
                         bubbleSortThread.start();
                     }
                     else if(bubbleSortThread.suspended)
@@ -230,7 +230,6 @@ public class BubbleSortFragment extends Fragment
             }
         });
     }
-
 
     private void addBars(int numBar)
     {
@@ -369,7 +368,7 @@ public class BubbleSortFragment extends Fragment
                 algorithmSteps.add(step);
                 for(int j = 0; j < size-1-i; j++)
                 {
-                    step = new AlgorithmStep(-1, -1, false);
+                    step = new AlgorithmStep(i, j);
                     step.setCodeLine(3);
                     algorithmSteps.add(step);
                     if(vet[j] > vet[j+1])
@@ -494,9 +493,9 @@ public class BubbleSortFragment extends Fragment
         }
     }
 
-    private void animateCode(AlgorithmStep step, final AlgorithmStep previous)
+    private void animateCode(final AlgorithmStep step, final AlgorithmStep previous)
     {
-        int lineNumber = step.getCodeLine();
+        final int lineNumber = step.getCodeLine();
         if (lineNumber != -1)
         {
             final TextView tvLineCode = algorithmCodeLines.get(lineNumber);
