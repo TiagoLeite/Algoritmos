@@ -1,5 +1,7 @@
 package com.tiago.algoritmos;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -9,7 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.CardView;
 import android.text.Html;
+import android.text.Layout;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import junit.framework.Test;
@@ -39,6 +45,9 @@ public class BubbleSortFragment extends Fragment
     private List<AlgorithmStep> algorithmSteps;
     private TextView tvInfo;
     private List<TextView> algorithmCodeLines;
+    private PopupWindow popupWindow;
+    private LayoutInflater layoutInflater;
+    private CardView cardCode;
 
     @Nullable
     @Override
@@ -61,13 +70,65 @@ public class BubbleSortFragment extends Fragment
 
         setHasOptionsMenu(true);
 
+        cardCode = (CardView) rootView.findViewById(R.id.card_code);
+
         ViewGroup codeContainer = (ViewGroup)view.findViewById(R.id.code_container);
 
         algorithmCodeLines = new ArrayList<>(10);
 
-        for (int k=0; k < 10; k++)
+        for (int k=0; k < 7; k++)
         {
             TextView tvCodeLine = new TextView(view.getContext());
+            if (k == 5)//call swap function in bubble sort
+            {
+                tvCodeLine.setClickable(true);
+                tvCodeLine.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        layoutInflater = (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        if (layoutInflater != null) {
+                            ViewGroup popupContainer = (ViewGroup) layoutInflater.inflate(R.layout.bubble_swap_func, null);
+                            setupPopupWindow(popupContainer, v);
+                        }
+
+                        cardCode.setBackgroundColor(getResources().getColor(R.color.lightGrayBackgroundColor));
+                    }
+
+                    @TargetApi(Build.VERSION_CODES.KITKAT)
+                    private void setupPopupWindow(ViewGroup popupContainer, View v)
+                    {
+                        TextView tvFuncCodeLine;
+                        ViewGroup codeFuncContainer = (ViewGroup)popupContainer.findViewById(R.id.func_container);
+                        for (int p=0; p < 5; p++)
+                        {
+                            tvFuncCodeLine = new TextView(rootView.getContext());
+                            tvFuncCodeLine.setTypeface(Typeface.createFromAsset(rootView.
+                                    getContext().getAssets(),"FiraMono-Medium.otf"));
+                            int stringId = getResources().getIdentifier("swap_func_"+p,
+                                    "string", getContext().getPackageName());
+                            tvFuncCodeLine.setText(Html.fromHtml(getString(stringId)));
+                            codeFuncContainer.addView(tvFuncCodeLine);
+                        }
+                        popupWindow = new PopupWindow(popupContainer, codeFuncContainer.getLayoutParams().width,
+                                codeFuncContainer.getLayoutParams().height, true);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                            popupWindow.setElevation(4f);
+
+                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                cardCode.setBackgroundColor(getResources().getColor(R.color.white));
+                            }
+                        });
+
+                        popupWindow.showAsDropDown(v,
+                                (int)v.getX(), codeFuncContainer.getLayoutParams().height,
+                                Gravity.CENTER_HORIZONTAL);
+                    }
+                });
+            }
             algorithmCodeLines.add(tvCodeLine);
             tvCodeLine.setTypeface(Typeface.createFromAsset(view.
                     getContext().getAssets(),"FiraMono-Medium.otf"));
@@ -426,7 +487,7 @@ public class BubbleSortFragment extends Fragment
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.lightBlue));
+                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
                 }
             });
         }

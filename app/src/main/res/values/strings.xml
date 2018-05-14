@@ -17,7 +17,7 @@
     </string>
 
     <string name="bubble_line_1"><![CDATA[
-        \t<font color=\'#118811\'>int</font> n = arr.length;\n</string>]]>
+        \t\t<font color=\'#118811\'>int</font> n = arr.length;\n</string>]]>
     </string>
 
     <string name="bubble_line_2"><![CDATA[
@@ -29,30 +29,52 @@
     </string>
 
     <string name="bubble_line_4"><![CDATA[
-            \t\t\tif (arr[j] > arr[j+1]){\n</string>]]>
+            \t\t\tif (arr[j] > arr[j+1])\n</string>]]>
     </string>
 
     <string name="bubble_line_5"><![CDATA[
-        <font color=\'#118811\'>\t\t\t\t\t\tint</font> temp = arr[j];\n</string>]]>
+            \t\t\t\tswap(arr, j, j+1);\n</string>]]>
     </string>
 
     <string name="bubble_line_6"><![CDATA[
-        \t\t\t\t\t\tarr[j] = arr[j+1];\n</string>]]>
-    </string>
-
-    <string name="bubble_line_7"><![CDATA[
-        \t\t\t\t\t\tarr[j+1] = temp;\n</string>]]>
-    </string>
-
-    <string name="bubble_line_8"><![CDATA[
-        \t\t\t}\n</string>]]>
-    </string>
-
-    <string name="bubble_line_9"><![CDATA[
         }\n</string>]]>
     </string>
-    <!--
-    \t\t}\n
-    \t}\n>-->
+
+    <string name="swap_func_0"><![CDATA[
+        <font color=\'#118811\'>void</font> swap(<font color=\'#118811\'>int</font> arr[],
+        <font color=\'#118811\'>int</font> a,
+        <font color=\'#118811\'>int</font> b){\n</string>]]>
+    </string>
+
+    <string name="swap_func_1"><![CDATA[
+        <font color=\'#118811\'>\tint</font> temp = arr[a];
+        \n</string>]]>
+    </string>
+
+    <string name="swap_func_2"><![CDATA[
+    	\tarr[a] = arr[b];
+        \n</string>]]>
+    </string>
+
+    <string name="swap_func_3"><![CDATA[
+    	\tarr[b] = temp;
+        \n</string>]]>
+    </string>
+
+    <string name="swap_func_4"><![CDATA[
+        }
+        \n</string>]]>
+    </string>
 
 </resources>
+
+
+
+
+
+
+
+
+
+
+
