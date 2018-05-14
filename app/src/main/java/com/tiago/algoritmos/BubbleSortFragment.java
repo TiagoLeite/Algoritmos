@@ -2,7 +2,6 @@ package com.tiago.algoritmos;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -14,8 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.text.Html;
-import android.text.Layout;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,6 +34,7 @@ import static com.tiago.algoritmos.R.raw.swap;
 
 public class BubbleSortFragment extends Fragment
 {
+    private static final int MILLIS_DELAY = 2000;
     private LinearLayout barsContainer;
     private ViewGroup container;
     private int vet[];
@@ -87,18 +85,18 @@ public class BubbleSortFragment extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        ViewTooltip
+                        /*ViewTooltip
                                 .on(v)
                                 .autoHide(true, 2000)
                                 .position(ViewTooltip.Position.TOP)
                                 .text("Right")
-                                .show();
-                        /*layoutInflater = (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                .show();*/
+                        layoutInflater = (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         if (layoutInflater != null) {
                             ViewGroup popupContainer = (ViewGroup) layoutInflater.inflate(R.layout.bubble_swap_func, null);
                             setupPopupWindow(popupContainer, v);
                         }
-                        cardCode.setBackgroundColor(getResources().getColor(R.color.lightGrayBackgroundColor));*/
+                        //cardCode.setBackgroundColor(getResources().getColor(R.color.lightGrayBackgroundColor));
                     }
 
                     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -122,12 +120,12 @@ public class BubbleSortFragment extends Fragment
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                             popupWindow.setElevation(4f);
 
-                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        /*popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                             @Override
                             public void onDismiss() {
                                 cardCode.setBackgroundColor(getResources().getColor(R.color.white));
                             }
-                        });
+                        });*/
 
                         popupWindow.showAsDropDown(v,
                                 (int)v.getX(), codeFuncContainer.getLayoutParams().height,
@@ -328,7 +326,7 @@ public class BubbleSortFragment extends Fragment
                     else
                         animate(algorithmSteps.get(0), null);
 
-                    Thread.sleep(1000);
+                    Thread.sleep(MILLIS_DELAY);
                 }
                 catch (Exception e)
                 {
@@ -417,6 +415,8 @@ public class BubbleSortFragment extends Fragment
         private void animateBars(final AlgorithmStep step)
         {
             if(!step.getAnimate()) return;
+            if (!isAdded()) return;
+
             getActivity().runOnUiThread(new Runnable()
             {
                 @Override
@@ -509,7 +509,7 @@ public class BubbleSortFragment extends Fragment
                         TextView tvLineCodePrev = algorithmCodeLines.get(previous.getCodeLine());
                         tvLineCodePrev.setBackgroundColor(getResources().getColor(R.color.white));
                     }
-                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.lightBlue));
+                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.lightCodeHighlight));
                 }
             });
         }
