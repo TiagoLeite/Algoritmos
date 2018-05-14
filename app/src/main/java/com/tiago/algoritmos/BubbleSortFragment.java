@@ -2,6 +2,7 @@ package com.tiago.algoritmos;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -26,7 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import junit.framework.Test;
+import com.github.florent37.viewtooltip.ViewTooltip;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +75,7 @@ public class BubbleSortFragment extends Fragment
 
         ViewGroup codeContainer = (ViewGroup)view.findViewById(R.id.code_container);
 
-        algorithmCodeLines = new ArrayList<>(10);
+        algorithmCodeLines = new ArrayList<>(7);
 
         for (int k=0; k < 7; k++)
         {
@@ -86,13 +87,18 @@ public class BubbleSortFragment extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        layoutInflater = (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        ViewTooltip
+                                .on(v)
+                                .autoHide(true, 2000)
+                                .position(ViewTooltip.Position.TOP)
+                                .text("Right")
+                                .show();
+                        /*layoutInflater = (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         if (layoutInflater != null) {
                             ViewGroup popupContainer = (ViewGroup) layoutInflater.inflate(R.layout.bubble_swap_func, null);
                             setupPopupWindow(popupContainer, v);
                         }
-
-                        cardCode.setBackgroundColor(getResources().getColor(R.color.lightGrayBackgroundColor));
+                        cardCode.setBackgroundColor(getResources().getColor(R.color.lightGrayBackgroundColor));*/
                     }
 
                     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -289,8 +295,11 @@ public class BubbleSortFragment extends Fragment
                 finished = true;
                 return;
             }
-            AlgorithmStep step = algorithmSteps.get(currentStep++);
-            animate(step);
+            AlgorithmStep step = algorithmSteps.get(currentStep), prevStep=null;
+            if (currentStep > 0)
+                prevStep = algorithmSteps.get(currentStep-1);
+            currentStep++;
+            animate(step, prevStep);
         }
 
         private void runPreviousStep()
@@ -305,7 +314,7 @@ public class BubbleSortFragment extends Fragment
 
         private void runAuto()
         {
-            for(AlgorithmStep step : algorithmSteps)
+            for(int k = 0; k < algorithmSteps.size(); k++)
             {
                 try
                 {
@@ -314,14 +323,17 @@ public class BubbleSortFragment extends Fragment
                         while (suspended)
                             this.wait();
                     }
-                    animate(step);
-                    Thread.sleep(500);
+                    if ( k > 0)
+                        animate(algorithmSteps.get(k), algorithmSteps.get(k-1));
+                    else
+                        animate(algorithmSteps.get(0), null);
+
+                    Thread.sleep(1000);
                 }
                 catch (Exception e)
                 {
                     return;
                 }
-                //setBarSortedOk(step.getBarOk());
             }
         }
 
@@ -351,25 +363,28 @@ public class BubbleSortFragment extends Fragment
             step = new AlgorithmStep(-1, -1, false);
             step.setCodeLine(1);
             algorithmSteps.add(step);
-
-            step = new AlgorithmStep(-1, -1, false);
-            step.setCodeLine(2);
-            algorithmSteps.add(step);
-
             int size = vet.length, aux;
             for(int i = 0; i < size; i++)
             {
+                step = new AlgorithmStep(-1, -1, false);
+                step.setCodeLine(2);
+                algorithmSteps.add(step);
                 for(int j = 0; j < size-1-i; j++)
                 {
+                    step = new AlgorithmStep(-1, -1, false);
+                    step.setCodeLine(3);
+                    algorithmSteps.add(step);
                     if(vet[j] > vet[j+1])
                     {
                         step = new AlgorithmStep(vet[j], vet[j+1], false);
                         step.setStepDescription("Comparando valores " + vet[j] + " e " + vet[j+1]);
+                        step.setCodeLine(4);
                         algorithmSteps.add(step);
+
                         step = new AlgorithmStep(vet[j], vet[j+1], true);
                         step.setStepDescription("Como " + vet[j] + " > " + vet[j+1] + ", trocam-se os valores no vetor");
                         algorithmSteps.add(step);
-                        step.setCodeLine(4);
+                        step.setCodeLine(5);
                         aux = vet[j];
                         vet[j] = vet[j+1];
                         vet[j+1] = aux;
@@ -378,22 +393,25 @@ public class BubbleSortFragment extends Fragment
                     {
                         step = new AlgorithmStep(vet[j], vet[j+1], false);
                         step.setStepDescription("Comparando valores " + vet[j] + " e " + vet[j+1]);
-                        step.setCodeLine(3);
+                        step.setCodeLine(4);
                         algorithmSteps.add(step);
                     }
                 }
-                if(step != null)
-                    step.setBarOk(vet[size-i-1]);
             }
         }
 
         private void animate(AlgorithmStep step)
         {
+            animate(step, null);
+        }
+
+        private void animate(AlgorithmStep step, AlgorithmStep prevStep)
+        {
             showTextInfo(step);
             if (step.getPosition1() != -1)
                 animateBars(step);
             if (step.getCodeLine() != -1)
-                animateCode(step);
+                animateCode(step, prevStep);
         }
 
         private void animateBars(final AlgorithmStep step)
@@ -423,13 +441,13 @@ public class BubbleSortFragment extends Fragment
                         float x2 = b2.getX();
                         b1.animate()
                                 .x(x2)
-                                .setStartDelay(1000)
-                                .setDuration(500);
+                                .setStartDelay(250)
+                                .setDuration(750);
 
                         b2.animate()
                                 .x(x1)
-                                .setStartDelay(1000)
-                                .setDuration(500);
+                                .setStartDelay(250)
+                                .setDuration(750);
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable(){
                             @Override
@@ -438,8 +456,6 @@ public class BubbleSortFragment extends Fragment
                             }
                         }, 1000);
                     }
-                    //tvInfo.setText(step.getStepDescription());
-                    //setBarSortedOk(step.getBarOk());
                 }
             });
         }
@@ -478,7 +494,7 @@ public class BubbleSortFragment extends Fragment
         }
     }
 
-    private void animateCode(AlgorithmStep step)
+    private void animateCode(AlgorithmStep step, final AlgorithmStep previous)
     {
         int lineNumber = step.getCodeLine();
         if (lineNumber != -1)
@@ -486,8 +502,14 @@ public class BubbleSortFragment extends Fragment
             final TextView tvLineCode = algorithmCodeLines.get(lineNumber);
             getActivity().runOnUiThread(new Runnable() {
                 @Override
-                public void run() {
-                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+                public void run()
+                {
+                    if (previous!=null)
+                    {
+                        TextView tvLineCodePrev = algorithmCodeLines.get(previous.getCodeLine());
+                        tvLineCodePrev.setBackgroundColor(getResources().getColor(R.color.white));
+                    }
+                    tvLineCode.setBackgroundColor(getResources().getColor(R.color.lightBlue));
                 }
             });
         }
