@@ -21,19 +21,19 @@
     </string>
 
     <string name="bubble_line_2"><![CDATA[
-            \tfor (<font color=\'#118811\'>int</font> i = 0; i < n-1; i++)\n</string>]]>
+            for (<font color=\'#118811\'>int</font> i = 0; i < n-1; i++)\n</string>]]>
     </string>
 
     <string name="bubble_line_3"><![CDATA[
-            \t\tfor (<font color=\'#118811\'>int</font> j = 0; j < n-i-1; j++)\n</string>]]>
+            \tfor (<font color=\'#118811\'>int</font> j = 0; j < n-i-1; j++)\n</string>]]>
     </string>
 
     <string name="bubble_line_4"><![CDATA[
-            \t\t\tif (arr[j] > arr[j+1])\n</string>]]>
+            \t\tif (arr[j] > arr[j+1])\n</string>]]>
     </string>
 
     <string name="bubble_line_5"><![CDATA[
-            \t\t\t\tswap(arr, j, j+1);\n</string>]]>
+            \t\t\tswap(arr, j, j+1);\n</string>]]>
     </string>
 
     <string name="bubble_line_6"><![CDATA[

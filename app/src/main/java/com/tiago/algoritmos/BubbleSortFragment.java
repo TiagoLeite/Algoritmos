@@ -59,7 +59,7 @@ public class BubbleSortFragment extends Fragment
 
         barsContainer = (LinearLayout) view.findViewById(R.id.bars_container);
 
-        addBars(5);
+        addBars(8);
 
         rootView = view;
 
@@ -417,8 +417,8 @@ public class BubbleSortFragment extends Fragment
                 @Override
                 public void run()
                 {
-                    View b1 = barsContainer.findViewWithTag(step.getArrValue1());
-                    View b2 = barsContainer.findViewWithTag(step.getArrValue2());
+                    final View b1 = barsContainer.findViewWithTag(step.getArrValue1());
+                    final View b2 = barsContainer.findViewWithTag(step.getArrValue2());
                     b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
@@ -449,7 +449,16 @@ public class BubbleSortFragment extends Fragment
                             public void run() {
                                 mp.start();
                             }
-                        }, 1000);
+                        }, 500);
+
+                        handler.postDelayed(new Runnable(){
+                            @Override
+                            public void run() {
+                                b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
+                                b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
+                            }
+                        }, 1300);
+
                     }
                 }
             });
