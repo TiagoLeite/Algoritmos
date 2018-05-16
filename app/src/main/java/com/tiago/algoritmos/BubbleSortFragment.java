@@ -303,6 +303,11 @@ public class BubbleSortFragment extends Fragment
             if(currentStep < 1)
                 return;
             AlgorithmStep step = algorithmSteps.get(--currentStep), prevStep;
+            if (step.getCodeLine() == 2 || step.getCodeLine() == 3 || step.getCodeLine() == 4)
+            {
+                animateCode(step, null);
+                step = algorithmSteps.get(--currentStep);
+            }
             prevStep = algorithmSteps.get(currentStep+1);
             animate(step, prevStep);
         }

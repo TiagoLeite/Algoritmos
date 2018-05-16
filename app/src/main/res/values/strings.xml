@@ -33,7 +33,7 @@
     </string>
 
     <string name="bubble_line_5"><![CDATA[
-            \t\t\tswap(arr, j, j+1);\n</string>]]>
+            \t\t\tswap(arr, j, j+1); <font color=\'#000000\' size=\'26dp\'>ℹ</font>\n</string>]]>
     </string>
 
     <string name="bubble_line_6"><![CDATA[
