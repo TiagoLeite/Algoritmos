@@ -36,7 +36,7 @@ public class BubbleSortFragment extends Fragment
     private static final int MILLIS_DELAY = 2000;
     private LinearLayout barsContainer;
     private ViewGroup container;
-    private int vet[], curI, curJ;//current value of i and j
+    private int vet[];
     private View rootView;
     private BubbleSortThread bubbleSortThread;
     private MediaPlayer mp;
@@ -45,6 +45,8 @@ public class BubbleSortFragment extends Fragment
     private List<TextView> algorithmCodeLines;
     private PopupWindow popupWindow;
     private LayoutInflater layoutInflater;
+    private View.OnClickListener btNextListener, btPrevListener;
+    private ImageView btNext, btPrevious;
 
     @Nullable
     @Override
@@ -189,8 +191,7 @@ public class BubbleSortFragment extends Fragment
             }
         });
 
-        ImageView next = (ImageView)rootView.findViewById(R.id.next);
-        next.setOnClickListener(new View.OnClickListener() {
+        btNextListener = new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -204,10 +205,9 @@ public class BubbleSortFragment extends Fragment
                     bubbleSortThread.runNextStep();
                 }
             }
-        });
+        };
 
-        ImageView previous = (ImageView)rootView.findViewById(R.id.previous);
-        previous.setOnClickListener(new View.OnClickListener() {
+        btPrevListener = new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -221,7 +221,13 @@ public class BubbleSortFragment extends Fragment
                     bubbleSortThread.runPreviousStep();
                 }
             }
-        });
+        };
+
+        btNext = (ImageView)rootView.findViewById(R.id.next);
+        btNext.setOnClickListener(btNextListener);
+
+        btPrevious = (ImageView)rootView.findViewById(R.id.previous);
+        btPrevious.setOnClickListener(btPrevListener);
     }
 
     private void addBars(int numBar)
@@ -295,11 +301,10 @@ public class BubbleSortFragment extends Fragment
         private void runPreviousStep()
         {
             if(currentStep < 1)
-            {
                 return;
-            }
-            AlgorithmStep step = algorithmSteps.get(--currentStep);
-            animate(step);
+            AlgorithmStep step = algorithmSteps.get(--currentStep), prevStep;
+            prevStep = algorithmSteps.get(currentStep+1);
+            animate(step, prevStep);
         }
 
         private void runAuto()
@@ -432,6 +437,9 @@ public class BubbleSortFragment extends Fragment
 
                     if(step.isSwap())
                     {
+                        btNext.setOnClickListener(null);
+                        btPrevious.setOnClickListener(null);
+
                         float x1 = b1.getX();
                         float x2 = b2.getX();
                         b1.animate()
@@ -456,8 +464,10 @@ public class BubbleSortFragment extends Fragment
                             public void run() {
                                 b1.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
                                 b2.findViewById(R.id.bar).setBackgroundColor(getResources().getColor(R.color.gray));
+                                btNext.setOnClickListener(btNextListener);
+                                btPrevious.setOnClickListener(btPrevListener);
                             }
-                        }, 1300);
+                        }, 1250);
 
                     }
                 }
