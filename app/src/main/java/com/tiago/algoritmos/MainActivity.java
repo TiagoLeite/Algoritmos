@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             new DrawerItem("BubbleSort", DrawerItem.TYPE_TOPIC),
             new DrawerItem("InsertionSort", DrawerItem.TYPE_TOPIC),
             new DrawerItem("SelectionSort", DrawerItem.TYPE_TOPIC),
+            new DrawerItem("QuickSort", DrawerItem.TYPE_TOPIC),
             new DrawerItem("Grafos", DrawerItem.TYPE_TITLE),
             new DrawerItem("GraphFragment", DrawerItem.TYPE_TOPIC)
         };
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentMap = new HashMap<>();
 
         fragmentMap.put("BubbleSort", new BubbleSortFragment());
+        fragmentMap.put("QuickSort", new QuickSortFragment());
         fragmentMap.put("InsertionSort", new InsertionSortFragment());
         fragmentMap.put("SelectionSort", new SelectionSortFragment());
         fragmentMap.put("GraphFragment", new GraphFragment());
