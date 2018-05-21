@@ -43,13 +43,18 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewDrawer.setLayoutManager(llm);
         DrawerItem[] myDataset = new DrawerItem[]
         {
+            new DrawerItem("Recursão", DrawerItem.TYPE_TITLE),
+            new DrawerItem("Fibonacci", DrawerItem.TYPE_ITEM),
+            new DrawerItem("Fatorial", DrawerItem.TYPE_ITEM),
+
             new DrawerItem("Ordenação", DrawerItem.TYPE_TITLE),
-            new DrawerItem("BubbleSort", DrawerItem.TYPE_TOPIC),
-            new DrawerItem("InsertionSort", DrawerItem.TYPE_TOPIC),
-            new DrawerItem("SelectionSort", DrawerItem.TYPE_TOPIC),
-            new DrawerItem("QuickSort", DrawerItem.TYPE_TOPIC),
+            new DrawerItem("BubbleSort", DrawerItem.TYPE_ITEM),
+            new DrawerItem("InsertionSort", DrawerItem.TYPE_ITEM),
+            new DrawerItem("SelectionSort", DrawerItem.TYPE_ITEM),
+            new DrawerItem("QuickSort", DrawerItem.TYPE_ITEM),
+
             new DrawerItem("Grafos", DrawerItem.TYPE_TITLE),
-            new DrawerItem("GraphFragment", DrawerItem.TYPE_TOPIC)
+            new DrawerItem("GraphFragment", DrawerItem.TYPE_ITEM)
         };
         RecyclerDrawerAdapter mAdapter = new RecyclerDrawerAdapter(myDataset);
         recyclerViewDrawer.setAdapter(mAdapter);
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentMap = new HashMap<>();
 
+        fragmentMap.put("Fatorial", new FatorialFragment());
         fragmentMap.put("BubbleSort", new BubbleSortFragment());
         fragmentMap.put("QuickSort", new QuickSortFragment());
         fragmentMap.put("InsertionSort", new InsertionSortFragment());
@@ -103,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             View view;
             switch (viewType)
             {
-                case DrawerItem.TYPE_TOPIC:
+                case DrawerItem.TYPE_ITEM:
                     view = LayoutInflater.from(parent.getContext())
                             .inflate(R.layout.drawer_row_topic, parent, false);
                     return new ViewHolderTopic(view);
@@ -127,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
             switch (type)
             {
-                case DrawerItem.TYPE_TOPIC:
+                case DrawerItem.TYPE_ITEM:
                     addItemTypeTopic(holder, pos);
                     break;
                 case DrawerItem.TYPE_TITLE:
@@ -198,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     private class DrawerItem
     {
         public static final short TYPE_TITLE = 0;
-        public static final short TYPE_TOPIC = 1;
+        public static final short TYPE_ITEM = 1;
         private String itemText;
         private short itemType;
 

@@ -169,7 +169,6 @@ public class BubbleSortFragment extends Fragment
                 {
                     if(bubbleSortThread == null || bubbleSortThread.isFinished())
                     {
-
                         bubbleSortThread = new BubbleSortThread(BubbleSortThread.MODE_AUTO);
                         ((ImageView)view).setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.pause));
                         bubbleSortThread.start();
